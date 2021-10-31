@@ -1,108 +1,52 @@
-import React, { useEffect, useReducer, useRef } from 'react';
-import gravel from './gravel.jpg';
-import grass from './grass.jpg';
-import tree from './tree.png';
+import React, { useCallback, useRef } from 'react';
 import { ShapeDrawer } from './ShapeDrawer';
-import { generateIntersection, generateRoad, Shape } from './ShapeGenerator';
+import { generateScene } from './SceneGenerator';
+import { fromPolar } from './Vector';
+import { Texture, Textures } from './Textures';
 
 
-const TEXTURES: Record<string, string> = {
-    'gravel-texture': gravel,
-    'grass-texture': grass,
-    'tree': tree,
-};
 
 export const Canvas: React.FC<{}> = () => {
 
-    const [imagesLoaded, imageLoaded] = useReducer((prevstate: number, action: {}) => {
-        return prevstate + 1;
-    }, 0);
+
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
-    useEffect(() => {
-        if (imagesLoaded === Object.keys(TEXTURES).length) {
-            const textures = Object.keys(TEXTURES).reduce((acc, tname) => {
-                acc[tname] = document.getElementById(tname) as HTMLImageElement;
-                return acc;
-            }, {} as Record<string, HTMLImageElement>);
+    const draw = useCallback((textures: Array<Texture>) => {
+        const textureMap: Record<string, Texture> = textures.reduce((acc, curr) => { acc[curr.name] = curr; return acc; }, {} as Record<string, Texture>);
 
-            const canvas = canvasRef.current;
-            if (canvas) {
-                const context = canvas.getContext('2d');
-                if (context) {
-                    const drawer = ShapeDrawer(context, textures);
-
-                    const background: Shape = {
-                        origin: [0, 0],
-                        appearance: {
-                            type: 'tiled',
-                            texture: 'grass-texture',
-                            scale: 0.2,
-                        },
-                        segments: [
-                            { type: 'line', to: [800, 0] },
-                            { type: 'line', to: [800, 600] },
-                            { type: 'line', to: [0, 600] },
-                            { type: 'line', to: [0, 0] },
-                        ]
-                    };
-
-                    const roads = generateIntersection([
-                        {
-                            from: [0, 0],
-                            width: 30
-                        },
-                        {
-                            from: [300, 700],
-                            width: 20
-                        },
-                        {
-                            from: [900, 300],
-                            width: 30
-                        },
-                    ], {
-                        texture: 'gravel-texture',
-                        scale: 0.3,
-                    });
-
-                    drawer.shape(background);
-                    roads.forEach(drawer.shape);
-                    drawer.shape({
-                        origin: [500, 100],
-                        segments: [],
-                        appearance: {
-                            scale: 0.5,
-                            type: 'single',
-                            texture: 'tree'
-                        }
-                    });
-                    drawer.shape({
-                        origin: [300, 100],
-                        segments: [],
-                        appearance: {
-                            scale: 0.5,
-                            rotate: 0.5,
-                            type: 'single',
-                            texture: 'tree'
-                        }
-                    });
-                    drawer.shape({
-                        origin: [700, 100],
-                        segments: [],
-                        appearance: {
-                            scale: 0.5,
-                            rotate: 1,
-                            type: 'single',
-                            texture: 'tree'
-                        }
-                    });
-                }
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const context = canvas.getContext('2d');
+            if (context) {
+                const drawer = ShapeDrawer(context, textures, false);
+                const scene = generateScene(15, [
+                    {
+                        count: 50,
+                        texture: textureMap.rock
+                    },
+                    {
+                        count: 50,
+                        texture: textureMap.tree
+                    },
+                    {
+                        count: 50,
+                        texture: textureMap['other tree']
+                    },
+                    {
+                        count: 50,
+                        texture: textureMap.bigtree
+                    },
+                ], [1200, 1000], fromPolar(1, 10));
+                console.log(scene);
+                scene.areas.forEach(area => drawer.sceneArea(area));
+                scene.objects.forEach(sceneOb => drawer.sceneObject(sceneOb, scene.shadowVector));
             }
         }
-    }, [imagesLoaded]);
+    }, [canvasRef]);
 
     return <>
-        {Object.keys(TEXTURES).map(tname => <img key={tname} src={TEXTURES[tname]} id={tname} style={{ display: 'none' }} alt='' onLoad={imageLoaded} />)}
+        <Textures onLoaded={draw} />
         <canvas ref={canvasRef} width='1200px' height='1000px' />
     </>;
 }

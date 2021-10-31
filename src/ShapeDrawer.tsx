@@ -1,57 +1,88 @@
-import { Shape } from "./ShapeGenerator";
-import { add, invert, Point } from "./Vector";
+import { SceneArea, SceneObject } from "./Shape";
+import { Texture } from "./Textures";
+import { Point, stretch } from "./Vector";
 
-export const ShapeDrawer = (context: CanvasRenderingContext2D, textures: Record<string, HTMLImageElement>, debug?: boolean) => {
-    const shape = (shape: Shape) => {
+export const ShapeDrawer = (context: CanvasRenderingContext2D, textures: Array<Texture>, debug?: boolean) => {
+
+    const textureMap: Record<string, Texture> = textures.reduce((acc, curr) => { acc[curr.name] = curr; return acc; }, {} as Record<string, Texture>);
+
+    const debugPoint = (point: Point, style: string = '#00f') => {
         context.beginPath();
-        context.moveTo(...shape.origin);
-        shape.segments.forEach(segment => {
-            if (segment.type === 'line') {
-                context.lineTo(...segment.to);
-            } else if (segment.type === 'quadratic') {
-                const params: [number, number, number, number] = [...segment.control, ...segment.to];
-                context.quadraticCurveTo(...params);
-            }
-        });
+        context.moveTo(...point);
+        context.strokeStyle = style;
+        context.fillStyle = style;
+        context.arc(...point, 2, 0, 2 * Math.PI);
+        context.fill();
+        context.font = 'bold 28px serif';
+        //        context.fillText(JSON.stringify(point), ...add(point, [10, 10]));
+        context.stroke();
         context.closePath();
-
-
-
-        const texture = textures[shape.appearance.texture];
-
-        context.translate(...shape.origin);
-        context.rotate(shape.appearance.rotate ?? 0);
-        context.scale(shape.appearance.scale || 1, shape.appearance.scale || 1);
-
-        if (shape.appearance.type === 'tiled') {
-            context.fillStyle = context.createPattern(texture, 'repeat') || '#ccc';
-            context.fill();
-        }
-        if (shape.appearance.type === 'single') {
-            context.drawImage(texture, -texture.width / 2, -texture.height / 2);
-            if (debug) {
-                context.strokeStyle = '#00f';
-                context.strokeRect(-texture.width / 2, -texture.height / 2, texture.width, texture.height);
-            }
-        }
-        context.setTransform(new DOMMatrix());
-
-        if (debug) {
-            //debug outline
-            context.beginPath();
-            context.moveTo(...shape.origin);
-            context.strokeStyle = '#00f';
-            context.fillStyle = '#00f';
-            context.arc(...shape.origin, 5, 0, 2 * Math.PI);
-            context.font = 'bold 28px serif';
-            context.fillText(JSON.stringify(shape.origin), ...add(shape.origin, [10, 10]));
-            context.stroke();
-            context.closePath();
-        }
 
     }
 
+    const sceneArea = (shape: SceneArea) => {
+        const texture = textureMap[shape.texture.name];
+        const scale = texture.scale * (shape.texture.scale || 1);
+
+        context.beginPath();
+        context.moveTo(...shape.vertices[0]);
+        shape.vertices.slice(1).forEach(vertex => {
+            context.lineTo(...vertex);
+        });
+        context.closePath();
+
+        context.rotate(shape.texture.rotate ?? 0);
+        context.scale(scale, scale);
+
+        context.shadowColor = '';
+        context.shadowOffsetX = 0;
+        context.shadowOffsetY = 0;
+        context.fillStyle = context.createPattern(texture.loadedImage, 'repeat') || '#ccc';
+        context.fill();
+
+        if (debug) {
+            context.strokeStyle = 'rgba(255, 255, 0, 1)';
+            context.lineWidth = 3;
+            context.stroke();
+        }
+        context.setTransform(new DOMMatrix());
+    }
+
+    const sceneObject = (shape: SceneObject, shadowDirection: Point) => {
+        const texture = textureMap[shape.texture.name];
+        const scale = texture.scale * (shape.texture.scale || 1);
+
+        context.moveTo(...shape.origin);
+
+        context.translate(...shape.origin);
+        context.rotate((shape.texture.rotate ?? 0) + shape.orientation);
+        context.scale(scale, scale);
+
+        const shadowVector = stretch(shadowDirection, shape.height ?? 0);
+        context.shadowColor = 'rgba(30, 30, 30, .9)';
+        context.shadowOffsetX = shadowVector[0];
+        context.shadowOffsetY = shadowVector[1];
+        context.shadowBlur = 2;
+
+        context.drawImage(texture.loadedImage, -texture.loadedImage.width / 2, -texture.loadedImage.height / 2);
+
+        if (debug) {
+            context.shadowOffsetX = 0;
+            context.shadowOffsetY = 0;
+            context.fillStyle = 'rgba(0, 0, 255, .2)';
+            context.fillRect(-texture.loadedImage.width / 2, -texture.loadedImage.height / 2, texture.loadedImage.width, texture.loadedImage.height);
+        }
+        context.setTransform(new DOMMatrix());
+        if (debug) {
+            debugPoint(shape.origin);
+            context.fillStyle = 'rgba(255, 0, 0, .2)';
+            context.arc(...shape.origin, shape.radius, 0, Math.PI * 2);
+            context.fill();
+        }
+    }
+
     return {
-        shape,
+        sceneArea,
+        sceneObject
     };
 }

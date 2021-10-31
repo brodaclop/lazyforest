@@ -16,3 +16,5 @@ export const add = (origin: Point, vector: Point): Point => [origin[0] + vector[
 export const relative = (origin: Point, to: Point): Point => [to[0] - origin[0], to[1] - origin[1]];
 
 export const invert = (vector: Point): Point => [-vector[0], -vector[1]];
+
+export const fromPolar = (magnitude: number, dir: number): Point => [Math.cos(dir) * magnitude, Math.sin(dir) * magnitude];
