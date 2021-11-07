@@ -1,3 +1,4 @@
+import { Texture } from "./Textures";
 import { Point } from "./Vector";
 
 export interface SceneObject {
@@ -20,9 +21,16 @@ export interface SceneTexture {
 }
 
 export interface Scene {
-    areas: Array<SceneArea>;
-    objects: Array<SceneObject>;
+    size: Point;
+    layers: Record<string, SceneLayer>;
     shadowVector: Point;
+    tint?: string;
+}
+
+export interface SceneLayer {
+    type: 'base' | 'road' | 'object';
+    areas?: Array<SceneArea>;
+    objects?: Array<SceneObject>;
 }
 
 

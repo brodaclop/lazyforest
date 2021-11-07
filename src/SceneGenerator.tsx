@@ -7,68 +7,73 @@ import { SceneObjects } from "./generators/SceneObjects";
 import { Texture } from "./Textures";
 
 
+const ROAD_EDGE_OVERHANG = 100;
+
 const randomEdgePoint = (dim: Point): Point => {
     let pos = randomInt((dim[0] + dim[1]) * 2);
     if (pos < dim[0]) {
-        return [pos, 0];
+        return [pos, -ROAD_EDGE_OVERHANG];
     }
     pos -= dim[0];
     if (pos < dim[1]) {
-        return [dim[0], pos];
+        return [dim[0] + ROAD_EDGE_OVERHANG, pos];
     }
     pos -= dim[1];
     if (pos < dim[0]) {
-        return [pos, dim[1]];
+        return [pos, dim[1] + ROAD_EDGE_OVERHANG];
     }
     pos -= dim[0];
-    return [0, pos];
+    return [-ROAD_EDGE_OVERHANG, pos];
 }
 
-
-export const generateScene = (roads: number, objects: Array<{ texture: Texture, count: number }>, dim: Point, shadowVector: Point): Scene => {
-
-    const scene: Scene = {
-        areas: [],
-        objects: [],
-        shadowVector
-    };
-
-    scene.areas.push({
-        vertices: [[0, 0], [dim[0], 0], dim, [0, dim[1]]],
-        texture: {
-            name: 'grass',
+export const SceneGenerator = {
+    create: (dim: Point, baseTexture: string): Scene => ({
+        layers: {
+            base: {
+                areas: [{
+                    vertices: [[0, 0], [dim[0], 0], dim, [0, dim[1]]],
+                    texture: {
+                        name: baseTexture,
+                    },
+                }],
+                type: 'base'
+            }
         },
-    });
+        shadowVector: [0, 0],
+        size: dim
+    }),
+    roads: (scene: Scene, layer: string, mainWidth: number, sideRoads: Array<number>, texture: Texture): Scene => {
+        const dim = scene.size;
 
-    const roadAreas: Array<SceneArea> = [];
-
-    if (roads) {
         const mainEndpoints: Array<{ from: Point, width: number }> = [
-            { from: [0, randomBetween(0.1 * dim[1], 0.9 * dim[1])], width: dim[1] / 40 },
-            { from: [dim[0], randomBetween(0.1 * dim[1], 0.9 * dim[1])], width: dim[1] / 40 }
-        ]
+            { from: [-ROAD_EDGE_OVERHANG, randomBetween(0.1 * dim[1], 0.9 * dim[1])], width: mainWidth },
+            { from: [dim[0] + ROAD_EDGE_OVERHANG, randomBetween(0.1 * dim[1], 0.9 * dim[1])], width: mainWidth }
+        ];
 
-        const extraEndpointsCount = randomInt(roads / 5);
-        const extraEndpoints: Array<{ from: Point, width: number }> = range(0, extraEndpointsCount).map(() => ({
+        const extraEndpoints = sideRoads.map(width => ({
             from: randomEdgePoint(dim),
-            width: randomBetween(5, roads * 2)
+            width: width
         }));
 
-        Road.generate([...mainEndpoints, ...extraEndpoints], {
-            name: 'gravel',
-        }).forEach(shape => roadAreas.push(shape));
-    }
-    roadAreas.forEach(shape => scene.areas.push(shape));
+        scene.layers[layer] = {
+            areas: Road.generate([...mainEndpoints, ...extraEndpoints], {
+                name: texture.name
+            }),
+            type: 'road'
+        }
 
-    let sceneObjects: Array<SceneObject> = [];
-    objects.forEach(ob => {
-        const newObjects = SceneObjects.generate(dim, sceneObjects, ob.count, ob.texture.height, ob.texture.radius, {
-            name: ob.texture.name,
+        return scene;
+    },
+    objects: (scene: Scene, layer: string, count: number, texture: Texture): Scene => {
+        const currentObjects: Array<SceneObject> = scene.layers[layer]?.objects ?? [];
+        const roadAreas: Array<SceneArea> = scene.layers.road.areas ?? [];
+        const newObjects = SceneObjects.generate(scene.size, currentObjects, count, texture.height, texture.radius, {
+            name: texture.name,
         }, roadAreas);
-        sceneObjects = sceneObjects.concat(sceneObjects, newObjects);
-    })
-
-    sceneObjects.forEach(shape => scene.objects.push(shape));
-
-    return scene;
+        scene.layers[layer] = {
+            objects: currentObjects.concat(newObjects),
+            type: 'object'
+        }
+        return scene;
+    }
 }

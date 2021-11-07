@@ -5,6 +5,8 @@ import grass from './grass.jpg';
 import tree from './tree.png';
 import tree2 from './tree2.png';
 import rock from './rock.png';
+import dirt from './dirtroad.jpg';
+import lighterGrass from './lightergrass.jpg';
 
 export interface Texture {
     name: string;
@@ -15,6 +17,12 @@ export interface Texture {
     height: number;
     radius: number;
     loadedImage: HTMLImageElement;
+}
+
+export const TINTS: Record<string, string> = {
+    sunset: 'rgba(230,120,0,0.15)',
+    evening: 'rgba(0,0,250,0.2)',
+    night: 'rgba(0,0,250,0.3)',
 }
 
 export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
@@ -28,10 +36,28 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
         radius: 0,
     },
     {
+        name: 'dirt',
+        url: dirt,
+        type: 'pattern',
+        scale: 0.1,
+        category: 'road',
+        height: 0,
+        radius: 0,
+    },
+    {
         name: 'grass',
         url: grass,
         type: 'pattern',
         scale: 0.2,
+        category: 'ground',
+        height: 0,
+        radius: 0,
+    },
+    {
+        name: 'lighter grass',
+        url: lighterGrass,
+        type: 'pattern',
+        scale: 1,
         category: 'ground',
         height: 0,
         radius: 0,

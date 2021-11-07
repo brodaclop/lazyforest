@@ -1,10 +1,8 @@
-import { SceneArea, SceneObject } from "./Shape";
+import { Scene, SceneArea, SceneObject } from "./Shape";
 import { Texture } from "./Textures";
 import { Point, stretch } from "./Vector";
 
-export const ShapeDrawer = (context: CanvasRenderingContext2D, textures: Array<Texture>, debug?: boolean) => {
-
-    const textureMap: Record<string, Texture> = textures.reduce((acc, curr) => { acc[curr.name] = curr; return acc; }, {} as Record<string, Texture>);
+export const ShapeDrawer = (context: CanvasRenderingContext2D, textures: Record<string, Texture>, debug?: boolean) => {
 
     const debugPoint = (point: Point, style: string = '#00f') => {
         context.beginPath();
@@ -21,7 +19,8 @@ export const ShapeDrawer = (context: CanvasRenderingContext2D, textures: Array<T
     }
 
     const sceneArea = (shape: SceneArea) => {
-        const texture = textureMap[shape.texture.name];
+        clearShadow();
+        const texture = textures[shape.texture.name];
         const scale = texture.scale * (shape.texture.scale || 1);
 
         context.beginPath();
@@ -49,7 +48,8 @@ export const ShapeDrawer = (context: CanvasRenderingContext2D, textures: Array<T
     }
 
     const sceneObject = (shape: SceneObject, shadowDirection: Point) => {
-        const texture = textureMap[shape.texture.name];
+        clearShadow();
+        const texture = textures[shape.texture.name];
         const scale = texture.scale * (shape.texture.scale || 1);
 
         context.moveTo(...shape.origin);
@@ -81,8 +81,30 @@ export const ShapeDrawer = (context: CanvasRenderingContext2D, textures: Array<T
         }
     }
 
+    const clearShadow = () => {
+        context.shadowOffsetX = 0;
+        context.shadowOffsetY = 0;
+        context.shadowColor = '';
+        context.shadowBlur = 0;
+    }
+
+    const scene = (scene: Scene, debug: boolean = false) => {
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        Object.values(scene.layers).forEach(layer => {
+            layer.areas?.forEach(sceneArea);
+            layer.objects?.forEach(ob => sceneObject(ob, scene.shadowVector));
+        });
+        if (scene.tint && scene.tint !== 'none') {
+            clearShadow();
+            context.fillStyle = scene.tint;
+            context.setTransform(new DOMMatrix());
+            context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        }
+    }
+
     return {
         sceneArea,
-        sceneObject
+        sceneObject,
+        scene
     };
 }
