@@ -10,10 +10,12 @@ export interface VisualsCardProps {
     onTintChange: (tint: string) => unknown;
     resolution: number;
     onResolutionChange: (resolution: number) => unknown;
+    edgeShade?: number;
+    onEdgeShadeChange: (edgeShade: number) => unknown;
 }
 
 
-export const VisualsCard: React.FC<VisualsCardProps> = ({ tint, shadowVector, onShadowChange, onTintChange, resolution, onResolutionChange }) => {
+export const VisualsCard: React.FC<VisualsCardProps> = ({ tint, shadowVector, onShadowChange, onTintChange, resolution, onResolutionChange, edgeShade, onEdgeShadeChange }) => {
     const shadowLength = Math.round(lineLength(shadowVector) * 10);
     const shadowAngle = Math.round(Math.atan2(shadowVector[1], shadowVector[0]) * 180 / Math.PI);
     return <Card>
@@ -25,6 +27,7 @@ export const VisualsCard: React.FC<VisualsCardProps> = ({ tint, shadowVector, on
             <br />
             <Input label='Shadow length' type='number' value={shadowLength} onChange={e => onShadowChange(fromPolar(Number(e.target.value) / 10, Number(shadowAngle) * Math.PI / 180))} />
             <Input label='Shadow direction' type='number' step={5} value={shadowAngle} onChange={e => onShadowChange(fromPolar(shadowLength / 10, Number(e.target.value) * Math.PI / 180))} />
+            <Input label='Edge shade' type='number' step={5} value={edgeShade} onChange={e => onEdgeShadeChange(Number(e.target.value))} />
             <Input label='Pixels per grid' type='number' step={5} value={resolution} onChange={e => onResolutionChange(Number(e.target.value))} />
         </Card.Content>
     </Card>

@@ -41,8 +41,15 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
         });
         context.closePath();
 
-        context.rotate(shape.texture.rotate ?? 0);
 
+
+        //edge shade
+        context.shadowColor = 'rgba(30, 30, 30, .9)';
+        context.shadowOffsetX = 0;
+        context.shadowOffsetY = 0;
+        context.shadowBlur = scene.edgeShade ?? 0;
+
+        context.rotate(shape.texture.rotate ?? 0);
         const textureScale = texture.scale * (shape.texture.scale || 1);
 
         if (shape.stretch) {
@@ -54,7 +61,6 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
             const stretchHeight = lineLength(subtract(shape.vertices[2], shape.vertices[1]));
 
             const angle = Math.atan2(vector[1], vector[0]);
-            console.log('angle', angle, ...vector);
             context.rotate(angle);
 
             const imageScale: Point = [textureScale / texture.loadedImage.width, textureScale / texture.loadedImage.height];
@@ -112,7 +118,7 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
             // context.fillStyle = 'rgba(0, 0, 255, .2)';
             // context.fillRect(-1 / 2, -1 / 2, 1, 1);
             debugPoint(shape.origin);
-            context.arc(...shape.origin, shape.radius / 2, 0, Math.PI * 2);
+            context.arc(...shape.origin, shape.radius, 0, Math.PI * 2);
             context.fillStyle = 'rgba(255, 0, 0, .2)';
             context.fill();
         }

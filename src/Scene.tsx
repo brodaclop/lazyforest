@@ -25,6 +25,7 @@ export interface Scene {
     layers: Record<string, SceneLayer>;
     shadowVector: Point;
     tint?: string;
+    edgeShade?: number;
 }
 
 export interface SceneLayer {

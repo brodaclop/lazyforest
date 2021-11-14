@@ -1,5 +1,5 @@
 import { randomBetween, randomInt } from "./Random";
-import { Scene, SceneArea, SceneObject } from "./Scene";
+import { Scene, SceneArea, SceneObject, SceneTexture } from "./Scene";
 import { Point } from "./Vector";
 import { Road } from "./generators/Road";
 import { SceneObjects } from "./generators/SceneObjects";
@@ -57,7 +57,7 @@ export const SceneGenerator = {
 
         return scene;
     },
-    roads: (scene: Scene, layer: string, mainWidth: number, sideRoads: Array<number>, texture: Texture, river?: SceneArea): Scene => {
+    roads: (scene: Scene, layer: string, mainWidth: number, sideRoads: Array<number>, texture: Texture, bridgeTexture?: Texture, river?: SceneArea): Scene => {
         const dim = scene.size;
 
         let mainEndpoints: Array<{ from: Point, width: number }> = [
@@ -70,10 +70,16 @@ export const SceneGenerator = {
             width: width
         }));
 
+        const bridge: SceneTexture | undefined = bridgeTexture && {
+            name: bridgeTexture.name
+        };
+
         scene.layers[layer] = {
             areas: Road.generate([...mainEndpoints, ...extraEndpoints], {
                 name: texture.name
-            }, river),
+            },
+                bridge,
+                river),
             type: 'road'
         };
 

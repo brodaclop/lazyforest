@@ -22,9 +22,9 @@ export const Canvas: React.FC<{}> = () => {
     const [resolution, setResolution] = useState<number>(SCALE);
     const [debug, setDebug] = useState<boolean>(false);
 
-    const regenerateRoads = useCallback((layer: string, mainWidth: number, sideRoads: Array<number>, texture: string) => {
+    const regenerateRoads = useCallback((layer: string, mainWidth: number, sideRoads: Array<number>, texture: string, bridgeTexture?: string) => {
         if (textures) {
-            setScene({ ...SceneGenerator.roads(scene, layer, mainWidth, sideRoads, textures[texture], scene.layers.river.areas?.[0]) });
+            setScene({ ...SceneGenerator.roads(scene, layer, mainWidth, sideRoads, textures[texture], textures[bridgeTexture ?? ''], scene.layers.river?.areas?.[0]) });
         }
     }, [scene, textures]);
 
@@ -86,7 +86,7 @@ export const Canvas: React.FC<{}> = () => {
                 <Card.Group itemsPerRow={1}>
                     <BaseLayerCard textures={textures ?? {}} createScene={createScene} />
                     <RiverLayerCard name='river' textures={textures ?? {}} generateRiver={regenerateRiver.bind(null, 'river')} />
-                    <RoadLayerCard name='road' textures={textures ?? {}} generateRoads={regenerateRoads.bind(null, 'road')} />
+                    <RoadLayerCard name='road' sceneHasRiver={!!scene.layers.river} textures={textures ?? {}} generateRoads={regenerateRoads.bind(null, 'road')} />
                     {Object.keys(scene.layers).filter(layer => scene.layers[layer].type === 'object').map(layer => {
                         return <ObjectLayerCard
                             name={layer}
@@ -108,10 +108,19 @@ export const Canvas: React.FC<{}> = () => {
                         }}
                         resolution={resolution}
                         onResolutionChange={setResolution}
+                        edgeShade={scene.edgeShade}
+                        onEdgeShadeChange={edgeShade => {
+                            scene.edgeShade = Math.max(0, edgeShade);
+                            setScene({ ...scene });
+                        }}
                     />
+                    <Card>
+                        <Card.Content>
+                            <Checkbox label='Debug mode' checked={debug} onChange={(_, data) => setDebug(!debug)} toggle />
+                        </Card.Content>
+                    </Card>
                 </Card.Group>
 
-                <Checkbox checked={debug} onChange={(_, data) => setDebug(!debug)} toggle />
             </div>
             <canvas style={{ width: `${scene.size[0] * resolution}px`, height: `${scene.size[1] * resolution}px` }} ref={canvasRef} width={`${scene.size[0] * resolution}px`} height={`${scene.size[1] * resolution}px`} />
         </div>

@@ -20,7 +20,7 @@ export const BaseLayerCard: React.FC<BaseLayerCardProps> = ({ textures, createSc
         <Card.Content>
             <Input type='number' label='Width' value={width} step={20} onChange={e => setWidth(Number(e.target.value))} />
             <Input type='number' label='Height' value={height} step={20} onChange={e => setHeight(Number(e.target.value))} />
-            <TextureSelector value={texture} textures={textures ?? {}} type='pattern' onChange={setTexture} />
+            <TextureSelector value={texture} textures={textures ?? {}} type='pattern' category='ground' onChange={setTexture} />
 
             <Button
                 icon='clone outline'

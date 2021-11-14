@@ -30,7 +30,6 @@ const intersect = (line: [Point, Point], area: SceneArea): Array<number> => {
         const p2 = area.vertices[(i + 1) % area.vertices.length];
         const fraction = intersection(line, [p1, p2]);
         if (fraction !== null) {
-            console.log('line ' + JSON.stringify(line) + ' intersecting at ' + fraction);
             ret.push(fraction);
         }
     }
@@ -49,12 +48,12 @@ const createRectangle = (from: Point, to: Point, width: number, texture: SceneTe
     };
 }
 
-const generateRoad = (from: Point, to: Point, width: number, texture: SceneTexture, river?: SceneArea): Array<SceneArea> => {
+const generateRoad = (from: Point, to: Point, width: number, texture: SceneTexture, bridgeTexture?: SceneTexture, river?: SceneArea): Array<SceneArea> => {
     const widthAdjustment = stretch(lineNormal(from, to), width / 2);
 
     const centerline: Array<Point> = [from, to];
 
-    if (river) {
+    if (river && bridgeTexture) {
         const intersectionPoints = intersect(centerline as [Point, Point], river);
         intersectionPoints.sort((a, b) => a - b);
         if (intersectionPoints.length === 2) {
@@ -63,9 +62,7 @@ const generateRoad = (from: Point, to: Point, width: number, texture: SceneTextu
             return [
                 ...generateRoad(from, bridge1, width, texture),
                 ...generateRoad(bridge2, to, width, texture),
-                createRectangle(bridge1, bridge2, width, {
-                    name: 'bridge'
-                })
+                createRectangle(bridge1, bridge2, width, bridgeTexture)
             ];
         }
     }
@@ -86,13 +83,12 @@ const generateRoad = (from: Point, to: Point, width: number, texture: SceneTextu
     }];
 }
 
-const generateRoads = (endpoints: Array<{ from: Point, width: number }>, texture: SceneTexture, river?: SceneArea): Array<SceneArea> => {
+const generateRoads = (endpoints: Array<{ from: Point, width: number }>, texture: SceneTexture, bridgeTexture?: SceneTexture, river?: SceneArea): Array<SceneArea> => {
     if (endpoints.length > 2) {
         const midpoint = endpoints.reduce((acc, curr) => [acc[0] + curr.from[0] / endpoints.length, acc[1] + curr.from[1] / endpoints.length] as Point, [0, 0] as Point);
-        return endpoints.flatMap(ep => generateRoad(ep.from, midpoint, ep.width, texture, river));
+        return endpoints.flatMap(ep => generateRoad(ep.from, midpoint, ep.width, texture, bridgeTexture, river));
     } else {
-        console.log('clean cut');
-        return generateRoad(endpoints[0].from, endpoints[1].from, endpoints[0].width, texture, river);
+        return generateRoad(endpoints[0].from, endpoints[1].from, endpoints[0].width, texture, bridgeTexture, river);
     }
 
 }

@@ -18,7 +18,7 @@ export const RiverLayerCard: React.FC<RiverLayerCardProps> = ({ name, textures, 
         <Card.Header><Header textAlign='center'>River Layer</Header></Card.Header>
         <Card.Content>
             <Input label='River width:' type='number' value={mainWidth} onChange={e => setMainWidth(Number(e.target.value))} />
-            <TextureSelector value={texture} textures={textures ?? {}} type='pattern' onChange={setTexture} />
+            <TextureSelector value={texture} textures={textures ?? {}} category='river' type='pattern' onChange={setTexture} />
             <Button icon='redo' content='Generate' disabled={texture === ''} onClick={() => generateRiver(mainWidth, texture)} />
         </Card.Content>
     </Card>

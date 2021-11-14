@@ -9,10 +9,11 @@ import dirt from './textures/dirtroad.jpg';
 import lighterGrass from './textures/lightergrass.jpg';
 import water from './textures/water.jpg';
 import bridge from './textures/bridge.png';
+import bridge2 from './textures/bridge2.png';
 
 export interface Texture {
     name: string;
-    category: string;
+    category: TextureCategory;
     url: string;
     type: 'single' | 'pattern';
     scale: number;
@@ -27,6 +28,8 @@ export const TINTS: Record<string, string> = {
     night: 'rgba(0,0,250,0.3)',
 }
 
+export type TextureCategory = 'ground' | 'river' | 'road' | 'bridge' | 'tree' | 'rock';
+
 export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
     {
         name: 'water',
@@ -40,6 +43,15 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
     {
         name: 'bridge',
         url: bridge,
+        type: 'pattern',
+        scale: 1,
+        category: 'bridge',
+        height: 0,
+        radius: 0,
+    },
+    {
+        name: 'straight bridge',
+        url: bridge2,
         type: 'pattern',
         scale: 1,
         category: 'bridge',
@@ -89,7 +101,7 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
         scale: 2,
         category: 'tree',
         height: 8,
-        radius: 2,
+        radius: 1,
     },
     {
         name: 'bigtree',
@@ -98,7 +110,7 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
         scale: 4,
         category: 'tree',
         height: 16,
-        radius: 4,
+        radius: 2,
     },
     {
         name: 'other tree',
@@ -107,7 +119,7 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
         scale: 3,
         category: 'tree',
         height: 12,
-        radius: 3,
+        radius: 1.5,
     },
     {
         name: 'rock',
@@ -116,7 +128,7 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
         scale: 0.3,
         category: 'rock',
         height: 2,
-        radius: 0.5,
+        radius: 0.25,
     },
 ]
 
