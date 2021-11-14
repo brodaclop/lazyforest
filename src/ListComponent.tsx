@@ -1,4 +1,4 @@
-import _, { range } from 'lodash';
+import { range } from 'lodash';
 import React from 'react';
 import { Button, List, SemanticICONS } from 'semantic-ui-react';
 

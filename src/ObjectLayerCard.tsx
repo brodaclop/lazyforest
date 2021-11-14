@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, ButtonGroup, Card, Header, Icon, Input } from 'semantic-ui-react';
+import { Button, ButtonGroup, Card, Header, Input } from 'semantic-ui-react';
 import { Texture } from './Textures';
 import { TextureSelector } from './TextureSelector';
 

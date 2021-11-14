@@ -1,5 +1,5 @@
-import { randomBetween, randomInt } from "../Random";
-import { SceneArea, SceneObject, SceneTexture } from "../Shape";
+import { randomBetween } from "../Random";
+import { SceneArea, SceneObject, SceneTexture } from "../Scene";
 import { Point, lineLength } from "../Vector";
 
 declare const OffscreenCanvas: any;
@@ -9,7 +9,7 @@ const MAX_TRIES = 1000;
 const placeObject = (dim: Point, avoid: Array<SceneObject>, radius: number, tries: number): Point | null => {
     let tried = 0;
     while (tried++ < tries) {
-        const candidate: Point = [randomInt(dim[0]), randomInt(dim[1])];
+        const candidate: Point = [randomBetween(0, dim[0]), randomBetween(0, dim[1])];
         const farEnough = avoid.every(ob => lineLength(ob.origin, candidate) > radius + ob.radius);
         if (farEnough) {
             return candidate;
@@ -25,7 +25,7 @@ const spreadObjects = (dim: Point, avoid: Array<SceneObject>, count: number, hei
     for (let i = 0; i < count; i++) {
         const newPoint = placeObject(dim, ret.concat(avoid), radius, MAX_TRIES);
         if (newPoint === null) {
-            console.log(`stopped object generation at ${i}, too many tries`);
+            console.warn(`stopped object generation at ${i}, too many tries`);
             break;
         }
         ret.push({

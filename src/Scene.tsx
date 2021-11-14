@@ -1,4 +1,3 @@
-import { Texture } from "./Textures";
 import { Point } from "./Vector";
 
 export interface SceneObject {
@@ -12,6 +11,7 @@ export interface SceneObject {
 export interface SceneArea {
     vertices: Array<Point>;
     texture: SceneTexture;
+    stretch?: boolean;
 }
 
 export interface SceneTexture {
@@ -28,7 +28,7 @@ export interface Scene {
 }
 
 export interface SceneLayer {
-    type: 'base' | 'road' | 'object';
+    type: 'base' | 'road' | 'river' | 'object';
     areas?: Array<SceneArea>;
     objects?: Array<SceneObject>;
 }

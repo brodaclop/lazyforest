@@ -1,4 +1,3 @@
-import { count } from 'console';
 import React, { useState } from 'react';
 import { Button, Card, Header, Input } from 'semantic-ui-react';
 import { Texture } from './Textures';
@@ -13,8 +12,8 @@ interface BaseLayerCardProps {
 export const BaseLayerCard: React.FC<BaseLayerCardProps> = ({ textures, createScene }) => {
 
     const [texture, setTexture] = useState<string>('');
-    const [width, setWidth] = useState<number>(1000);
-    const [height, setHeight] = useState<number>(800);
+    const [width, setWidth] = useState<number>(10);
+    const [height, setHeight] = useState<number>(10);
 
     return <Card>
         <Card.Header><Header textAlign='center'>Scene</Header></Card.Header>

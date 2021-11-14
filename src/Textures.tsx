@@ -1,12 +1,14 @@
 import React, { useEffect, useReducer } from 'react';
 
-import gravel from './gravel.jpg';
-import grass from './grass.jpg';
-import tree from './tree.png';
-import tree2 from './tree2.png';
-import rock from './rock.png';
-import dirt from './dirtroad.jpg';
-import lighterGrass from './lightergrass.jpg';
+import gravel from './textures/gravel.jpg';
+import grass from './textures/grass.jpg';
+import tree from './textures/tree.png';
+import tree2 from './textures/tree2.png';
+import rock from './textures/rock.png';
+import dirt from './textures/dirtroad.jpg';
+import lighterGrass from './textures/lightergrass.jpg';
+import water from './textures/water.jpg';
+import bridge from './textures/bridge.png';
 
 export interface Texture {
     name: string;
@@ -27,10 +29,28 @@ export const TINTS: Record<string, string> = {
 
 export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
     {
+        name: 'water',
+        url: water,
+        type: 'pattern',
+        scale: 1,
+        category: 'river',
+        height: 0,
+        radius: 0,
+    },
+    {
+        name: 'bridge',
+        url: bridge,
+        type: 'pattern',
+        scale: 1,
+        category: 'bridge',
+        height: 0,
+        radius: 0,
+    },
+    {
         name: 'gravel',
         url: gravel,
         type: 'pattern',
-        scale: 0.3,
+        scale: 1,
         category: 'road',
         height: 0,
         radius: 0,
@@ -39,7 +59,7 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
         name: 'dirt',
         url: dirt,
         type: 'pattern',
-        scale: 0.1,
+        scale: 1,
         category: 'road',
         height: 0,
         radius: 0,
@@ -48,7 +68,7 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
         name: 'grass',
         url: grass,
         type: 'pattern',
-        scale: 0.2,
+        scale: 3,
         category: 'ground',
         height: 0,
         radius: 0,
@@ -66,37 +86,37 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
         name: 'tree',
         url: tree,
         type: 'single',
-        scale: 0.2,
+        scale: 2,
         category: 'tree',
         height: 8,
-        radius: 30,
+        radius: 2,
     },
     {
         name: 'bigtree',
         url: tree,
         type: 'single',
-        scale: 0.3,
+        scale: 4,
         category: 'tree',
         height: 16,
-        radius: 45,
+        radius: 4,
     },
     {
         name: 'other tree',
         url: tree2,
         type: 'single',
-        scale: 0.1,
+        scale: 3,
         category: 'tree',
         height: 12,
-        radius: 40,
+        radius: 3,
     },
     {
         name: 'rock',
         url: rock,
         type: 'single',
-        scale: 0.05,
+        scale: 0.3,
         category: 'rock',
         height: 2,
-        radius: 10,
+        radius: 0.5,
     },
 ]
 

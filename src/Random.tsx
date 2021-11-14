@@ -3,7 +3,7 @@ export const randomInt = (max: number) => {
 }
 
 export const randomPlusMinus = (max: number) => {
-    return randomInt(2 * max + 1) - max;
+    return randomBetween(-max, max);
 }
 
 export const randomBetween = (from: number, to: number) => {
