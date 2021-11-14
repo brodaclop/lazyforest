@@ -1,0 +1,35 @@
+{
+  "files": {
+    "main.css": "/lazyforest/static/css/main.6dea0f05.chunk.css",
+    "main.js": "/lazyforest/static/js/main.1508e9cb.chunk.js",
+    "main.js.map": "/lazyforest/static/js/main.1508e9cb.chunk.js.map",
+    "runtime-main.js": "/lazyforest/static/js/runtime-main.3ae1ca13.js",
+    "runtime-main.js.map": "/lazyforest/static/js/runtime-main.3ae1ca13.js.map",
+    "static/css/2.2eba95db.chunk.css": "/lazyforest/static/css/2.2eba95db.chunk.css",
+    "static/js/2.3d0e53c2.chunk.js": "/lazyforest/static/js/2.3d0e53c2.chunk.js",
+    "static/js/2.3d0e53c2.chunk.js.map": "/lazyforest/static/js/2.3d0e53c2.chunk.js.map",
+    "static/js/3.aef9f55a.chunk.js": "/lazyforest/static/js/3.aef9f55a.chunk.js",
+    "static/js/3.aef9f55a.chunk.js.map": "/lazyforest/static/js/3.aef9f55a.chunk.js.map",
+    "index.html": "/lazyforest/index.html",
+    "static/css/2.2eba95db.chunk.css.map": "/lazyforest/static/css/2.2eba95db.chunk.css.map",
+    "static/css/main.6dea0f05.chunk.css.map": "/lazyforest/static/css/main.6dea0f05.chunk.css.map",
+    "static/js/2.3d0e53c2.chunk.js.LICENSE.txt": "/lazyforest/static/js/2.3d0e53c2.chunk.js.LICENSE.txt",
+    "static/media/semantic.min.css": "/lazyforest/static/media/outline-icons.ddae9b1b.woff",
+    "static/media/bridge.01e94610.png": "/lazyforest/static/media/bridge.01e94610.png",
+    "static/media/dirtroad.3f84b32a.jpg": "/lazyforest/static/media/dirtroad.3f84b32a.jpg",
+    "static/media/grass.1bdb8368.jpg": "/lazyforest/static/media/grass.1bdb8368.jpg",
+    "static/media/gravel.fadd9e77.jpg": "/lazyforest/static/media/gravel.fadd9e77.jpg",
+    "static/media/lightergrass.775fd4e3.jpg": "/lazyforest/static/media/lightergrass.775fd4e3.jpg",
+    "static/media/rock.f8863753.png": "/lazyforest/static/media/rock.f8863753.png",
+    "static/media/tree.251e1382.png": "/lazyforest/static/media/tree.251e1382.png",
+    "static/media/tree2.b70d7e22.png": "/lazyforest/static/media/tree2.b70d7e22.png",
+    "static/media/water.5bcc6117.jpg": "/lazyforest/static/media/water.5bcc6117.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.3ae1ca13.js",
+    "static/css/2.2eba95db.chunk.css",
+    "static/js/2.3d0e53c2.chunk.js",
+    "static/css/main.6dea0f05.chunk.css",
+    "static/js/main.1508e9cb.chunk.js"
+  ]
+}
