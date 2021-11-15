@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/lazyforest/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/lazyforest/static/js/main.3fa6e395.chunk.js",
-    "main.js.map": "/lazyforest/static/js/main.3fa6e395.chunk.js.map",
-    "runtime-main.js": "/lazyforest/static/js/runtime-main.3ae1ca13.js",
-    "runtime-main.js.map": "/lazyforest/static/js/runtime-main.3ae1ca13.js.map",
+    "main.js": "/lazyforest/static/js/main.b7095480.chunk.js",
+    "main.js.map": "/lazyforest/static/js/main.b7095480.chunk.js.map",
+    "runtime-main.js": "/lazyforest/static/js/runtime-main.4bb5cad6.js",
+    "runtime-main.js.map": "/lazyforest/static/js/runtime-main.4bb5cad6.js.map",
     "static/css/2.2eba95db.chunk.css": "/lazyforest/static/css/2.2eba95db.chunk.css",
-    "static/js/2.ba9fefee.chunk.js": "/lazyforest/static/js/2.ba9fefee.chunk.js",
-    "static/js/2.ba9fefee.chunk.js.map": "/lazyforest/static/js/2.ba9fefee.chunk.js.map",
-    "static/js/3.aef9f55a.chunk.js": "/lazyforest/static/js/3.aef9f55a.chunk.js",
-    "static/js/3.aef9f55a.chunk.js.map": "/lazyforest/static/js/3.aef9f55a.chunk.js.map",
+    "static/js/2.52e0634c.chunk.js": "/lazyforest/static/js/2.52e0634c.chunk.js",
+    "static/js/2.52e0634c.chunk.js.map": "/lazyforest/static/js/2.52e0634c.chunk.js.map",
+    "static/js/3.0376e4b1.chunk.js": "/lazyforest/static/js/3.0376e4b1.chunk.js",
+    "static/js/3.0376e4b1.chunk.js.map": "/lazyforest/static/js/3.0376e4b1.chunk.js.map",
     "index.html": "/lazyforest/index.html",
     "static/css/2.2eba95db.chunk.css.map": "/lazyforest/static/css/2.2eba95db.chunk.css.map",
     "static/css/main.6dea0f05.chunk.css.map": "/lazyforest/static/css/main.6dea0f05.chunk.css.map",
-    "static/js/2.ba9fefee.chunk.js.LICENSE.txt": "/lazyforest/static/js/2.ba9fefee.chunk.js.LICENSE.txt",
+    "static/js/2.52e0634c.chunk.js.LICENSE.txt": "/lazyforest/static/js/2.52e0634c.chunk.js.LICENSE.txt",
     "static/media/semantic.min.css": "/lazyforest/static/media/outline-icons.ddae9b1b.woff",
     "static/media/bridge.01e94610.png": "/lazyforest/static/media/bridge.01e94610.png",
     "static/media/bridge2.c503a7ba.png": "/lazyforest/static/media/bridge2.c503a7ba.png",
@@ -27,10 +27,10 @@
     "static/media/water.5bcc6117.jpg": "/lazyforest/static/media/water.5bcc6117.jpg"
   },
   "entrypoints": [
-    "static/js/runtime-main.3ae1ca13.js",
+    "static/js/runtime-main.4bb5cad6.js",
     "static/css/2.2eba95db.chunk.css",
-    "static/js/2.ba9fefee.chunk.js",
+    "static/js/2.52e0634c.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
-    "static/js/main.3fa6e395.chunk.js"
+    "static/js/main.b7095480.chunk.js"
   ]
 }
