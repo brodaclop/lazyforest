@@ -20,6 +20,7 @@ export interface Texture {
     height: number;
     radius: number;
     loadedImage: HTMLImageElement;
+    transparentImage: HTMLImageElement;
 }
 
 export const TINTS: Record<string, string> = {
@@ -30,7 +31,7 @@ export const TINTS: Record<string, string> = {
 
 export type TextureCategory = 'ground' | 'river' | 'road' | 'bridge' | 'tree' | 'rock';
 
-export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
+export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> = [
     {
         name: 'water',
         url: water,
@@ -132,6 +133,31 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage'>> = [
     },
 ]
 
+declare const OffscreenCanvas: any;
+
+const makeImageTransparent = async (image: HTMLImageElement): Promise<HTMLImageElement> => {
+    const offscreen = new OffscreenCanvas(image.naturalWidth, image.naturalHeight);
+    const osContext = offscreen.getContext('2d') as CanvasRenderingContext2D;
+    osContext.drawImage(image, 0, 0);
+    const imageData = osContext.getImageData(0, 0, image.naturalWidth, image.naturalHeight);
+    for (let i = 3; i < imageData.data.length; i += 4) {
+        if (i === 3) {
+            console.log('alpha', image.src, imageData.data[i]);
+        }
+        imageData.data.set([imageData.data[i] / 3], i);
+    }
+    osContext.putImageData(imageData, 0, 0);
+    const output = new Image();
+
+    const blob = await offscreen.convertToBlob({
+        type: "image/png",
+    });
+
+    output.src = URL.createObjectURL(blob); // use toDataURL() to avoid cleanup problems
+    return output;
+}
+
+
 export const Textures: React.FC<{ onLoaded: (textures: Array<Texture>) => unknown }> = ({ onLoaded }) => {
 
     const [imagesLoaded, imageLoaded] = useReducer((prevstate: number, action: {}) => {
@@ -140,7 +166,17 @@ export const Textures: React.FC<{ onLoaded: (textures: Array<Texture>) => unknow
 
     useEffect(() => {
         if (imagesLoaded === TEXTURES.length) {
-            onLoaded(TEXTURES.map(t => ({ ...t, loadedImage: document.getElementById(t.name) as HTMLImageElement })));
+            (async () => {
+                const loaded: Array<Texture> = [];
+                for (let i = 0; i < TEXTURES.length; i++) {
+                    const t = TEXTURES[i];
+                    const loadedImage = document.getElementById(t.name) as HTMLImageElement;
+                    const transparentImage = await makeImageTransparent(loadedImage);
+                    loaded.push({ ...t, loadedImage, transparentImage });
+                }
+                onLoaded(loaded);
+
+            })();
         }
     }, [imagesLoaded, onLoaded]);
 

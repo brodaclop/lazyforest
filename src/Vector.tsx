@@ -37,8 +37,6 @@ export const intersection = (a: [Point, Point], b: [Point, Point]): number | nul
         const ua = ua_t / u_b;
         const ub = ub_t / u_b;
 
-        console.log(`a: ${JSON.stringify(a)}, b: ${JSON.stringify(b)}, ua: ${ua}, ub: ${ub}`);
-
         if (0 <= ua && ua <= 1 && 0 <= ub && ub <= 1) {
             return ua;
         }

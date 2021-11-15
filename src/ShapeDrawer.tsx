@@ -1,10 +1,24 @@
 import { Scene, SceneArea, SceneObject } from "./Scene";
 import { Texture } from "./Textures";
-import { lineLength, Point, stretch, subtract } from "./Vector";
-
+import { add, lineLength, lineNormal, normalize, Point, stretch, subtract } from "./Vector";
 export const drawScene = (context: CanvasRenderingContext2D, textures: Record<string, Texture>, scene: Scene, debug?: boolean) => {
 
     const globalScale: Point = [context.canvas.width / scene.size[0], context.canvas.height / scene.size[1]];
+
+    const borderArea = (area: SceneArea, width: number): Array<Point> => {
+        const ret: Array<Point> = [];
+        for (let i = 0; i < area.vertices.length; i++) {
+            const p0 = area.vertices[(i + area.vertices.length - 1) % area.vertices.length];
+            const p1 = area.vertices[i];
+            const p2 = area.vertices[(i + 1) % area.vertices.length];
+            const normal1 = lineNormal(p1, p2);
+            const normal2 = lineNormal(p0, p1);
+            const normal = normalize(add(normal1, normal2));
+            ret.push(add(p1, stretch(normal, width)));
+        }
+        const original = [...area.vertices];
+        return [...ret, ret[0], area.vertices[0], ...original.reverse()];
+    }
 
     const reset = () => {
         context.setTransform(new DOMMatrix());
@@ -28,19 +42,21 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
         context.closePath();
     }
 
+    const drawPath = (vertices: Array<Point>): void => {
+        context.beginPath();
+        context.moveTo(...vertices[0]);
+        vertices.slice(1).forEach(vertex => {
+            context.lineTo(...vertex);
+        });
+        context.closePath();
+    }
 
     const sceneArea = (shape: SceneArea) => {
         reset();
 
         const texture = textures[shape.texture.name];
 
-        context.beginPath();
-        context.moveTo(...shape.vertices[0]);
-        shape.vertices.slice(1).forEach(vertex => {
-            context.lineTo(...vertex);
-        });
-        context.closePath();
-
+        drawPath(shape.vertices);
 
 
         //edge shade
@@ -71,10 +87,18 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
             context.drawImage(texture.loadedImage, - texture.loadedImage.width / 10, - texture.loadedImage.height / 10);
         } else {
             const imageScale: Point = [textureScale / texture.loadedImage.width, textureScale / texture.loadedImage.height];
+            context.save();
             context.scale(...imageScale);
 
             context.fillStyle = context.createPattern(texture.loadedImage, 'repeat') || '#c0c';
             context.fill();
+            context.restore();
+
+            drawPath(borderArea(shape, -0.05));
+            context.scale(...imageScale);
+            context.fillStyle = context.createPattern(texture.transparentImage, 'repeat') || '#c0c';
+            context.fill();
+
         }
 
 

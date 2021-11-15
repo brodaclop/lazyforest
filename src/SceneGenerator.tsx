@@ -22,8 +22,6 @@ const randomEdgePoint = (dim: Point): Point => {
     }
 }
 
-
-
 export const SceneGenerator = {
     create: (dim: Point, baseTexture: string): Scene => ({
         layers: {

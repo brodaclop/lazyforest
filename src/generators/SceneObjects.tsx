@@ -11,11 +11,9 @@ const placeObject = (dim: Point, avoid: Array<SceneObject>, radius: number, trie
     while (tried++ < tries) {
         const candidate: Point = [randomBetween(0, dim[0]), randomBetween(0, dim[1])];
         const farEnough = avoid.every(ob => lineLength(ob.origin, candidate) > radius + ob.radius);
-        console.log('candidate', JSON.stringify(candidate), radius);
         if (farEnough) {
             return candidate;
         }
-        console.log('too close to ', JSON.stringify(avoid.filter(ob => lineLength(ob.origin, candidate) <= radius + ob.radius)));
     }
     return null;
 }
