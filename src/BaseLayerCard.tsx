@@ -1,5 +1,6 @@
+import { Button, Card, CardActions, CardContent, CardHeader } from '@mui/material';
 import React, { useState } from 'react';
-import { Button, Card, Header, Input } from 'semantic-ui-react';
+import { NumberInput } from './NumberInput';
 import { Texture } from './Textures';
 import { TextureSelector } from './TextureSelector';
 import { Point } from './Vector';
@@ -15,18 +16,20 @@ export const BaseLayerCard: React.FC<BaseLayerCardProps> = ({ textures, createSc
     const [width, setWidth] = useState<number>(10);
     const [height, setHeight] = useState<number>(10);
 
-    return <Card>
-        <Card.Header><Header textAlign='center'>Scene</Header></Card.Header>
-        <Card.Content>
-            <Input type='number' label='Width' value={width} step={20} onChange={e => setWidth(Number(e.target.value))} />
-            <Input type='number' label='Height' value={height} step={20} onChange={e => setHeight(Number(e.target.value))} />
-            <TextureSelector value={texture} textures={textures ?? {}} type='pattern' category='ground' onChange={setTexture} />
-
+    return <Card sx={{ boxShadow: 3 }}>
+        <CardHeader title='Scene' />
+        <CardContent>
+            <NumberInput width={25} value={width} min={1} max={50} step={1} onChange={setWidth} label='Width' />
+            <NumberInput width={25} value={height} min={1} max={50} step={1} onChange={setHeight} label='Height' />
+            <TextureSelector width={30} value={texture} textures={textures ?? {}} type='pattern' category='ground' onChange={setTexture} label='Ground texture' />
+        </CardContent>
+        <CardActions>
             <Button
-                icon='clone outline'
-                content='Create'
+                variant='contained'
                 disabled={texture === ''}
-                onClick={() => createScene([width, height], texture)} />
-        </Card.Content>
+                onClick={() => createScene([width, height], texture)}>
+                Create
+            </Button>
+        </CardActions>
     </Card>
 }

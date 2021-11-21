@@ -1,25 +1,36 @@
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import React from 'react';
-import { Select } from 'semantic-ui-react';
 import { Texture, TextureCategory } from './Textures';
 
 export interface TextureSelectorProps {
     textures: Record<string, Texture>,
     type: 'single' | 'pattern',
     category?: TextureCategory,
+    label?: string,
     value: string,
+    width?: number,
     onChange: (name: string) => unknown,
 }
 
-export const TextureSelector: React.FC<TextureSelectorProps> = ({ textures, type, category, value, onChange }) => {
-    return <Select
-        value={value}
-        onChange={(_, { value }) => onChange(value as string)}
-        placeholder='Select texture'
-        options={
-            Object.keys(textures)
+
+export const TextureSelector: React.FC<TextureSelectorProps> = ({ textures, type, category, label, value, width = 90, onChange }) => {
+    const renderValue = (t: string) => <><img style={{ height: '1.5rem', marginRight: '0.2rem' }} src={textures[t].url} />{t}</>;
+
+    return <FormControl sx={{ width: `${width}%` }}>
+        <InputLabel>{label}</InputLabel>
+        <Select
+            value={value}
+            onChange={(e) => onChange(e.target.value as string)}
+            label={label}
+            displayEmpty
+            renderValue={selected => selected ? renderValue(selected) : label}
+            autoWidth
+        >
+            <MenuItem value=''>None</MenuItem>
+            {Object.keys(textures)
                 .filter(t => textures[t].type === type)
                 .filter(t => !category || (textures[t].category === category))
-                .map(t => ({ key: t, text: t, value: t, image: textures[t].url }))
-        }
-    />
+                .map(t => <MenuItem value={t}>{renderValue(t)}</MenuItem>)}
+        </Select>
+    </FormControl>;
 }

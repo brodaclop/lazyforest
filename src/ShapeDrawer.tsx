@@ -5,7 +5,7 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
 
     const globalScale: Point = [context.canvas.width / scene.size[0], context.canvas.height / scene.size[1]];
 
-    const borderArea = (area: SceneArea, width: number): Array<Point> => {
+    const borderArea = (area: SceneArea): Array<Point> => {
         const ret: Array<Point> = [];
         for (let i = 0; i < area.vertices.length; i++) {
             const p0 = area.vertices[(i + area.vertices.length - 1) % area.vertices.length];
@@ -14,10 +14,19 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
             const normal1 = lineNormal(p1, p2);
             const normal2 = lineNormal(p0, p1);
             const normal = normalize(add(normal1, normal2));
-            ret.push(add(p1, stretch(normal, width)));
+            ret.push(add(p1, stretch(normal, area.edge?.width[0] ?? 0)));
         }
-        const original = [...area.vertices];
-        return [...ret, ret[0], area.vertices[0], ...original.reverse()];
+        for (let i = area.vertices.length - 1; i >= 0; i--) {
+            const p0 = area.vertices[(i + area.vertices.length - 1) % area.vertices.length];
+            const p1 = area.vertices[i];
+            const p2 = area.vertices[(i + 1) % area.vertices.length];
+            const normal1 = lineNormal(p1, p2);
+            const normal2 = lineNormal(p0, p1);
+            const normal = normalize(add(normal1, normal2));
+            ret.push(add(p1, stretch(normal, area.edge?.width[1] ?? 0)));
+        }
+        ret.splice(area.vertices.length, 0, ret[0], ret[ret.length - 1]);
+        return ret;
     }
 
     const reset = () => {
@@ -54,19 +63,16 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
     const sceneArea = (shape: SceneArea) => {
         reset();
 
-        const texture = textures[shape.texture.name];
+        const texture = textures[shape.texture];
 
         drawPath(shape.vertices);
 
 
         //edge shade
-        context.shadowColor = 'rgba(30, 30, 30, .9)';
+        context.shadowColor = 'rgba(30, 30, 30, .5)';
         context.shadowOffsetX = 0;
         context.shadowOffsetY = 0;
         context.shadowBlur = scene.edgeShade ?? 0;
-
-        context.rotate(shape.texture.rotate ?? 0);
-        const textureScale = texture.scale * (shape.texture.scale || 1);
 
         if (shape.stretch) {
             context.translate(...shape.vertices[0]);
@@ -79,14 +85,14 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
             const angle = Math.atan2(vector[1], vector[0]);
             context.rotate(angle);
 
-            const imageScale: Point = [textureScale / texture.loadedImage.width, textureScale / texture.loadedImage.height];
+            const imageScale: Point = [texture.scale / texture.loadedImage.width, texture.scale / texture.loadedImage.height];
             //const imageScale: Point = [textureScale / Math.max(texture.loadedImage.width, texture.loadedImage.height), textureScale / Math.max(texture.loadedImage.width, texture.loadedImage.height)];
             context.scale(...imageScale);
             context.scale(stretchWidth, stretchHeight);
             context.scale(1.2, 1.2)
             context.drawImage(texture.loadedImage, - texture.loadedImage.width / 10, - texture.loadedImage.height / 10);
         } else {
-            const imageScale: Point = [textureScale / texture.loadedImage.width, textureScale / texture.loadedImage.height];
+            const imageScale: Point = [texture.scale / texture.loadedImage.width, texture.scale / texture.loadedImage.height];
             context.save();
             context.scale(...imageScale);
 
@@ -94,10 +100,15 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
             context.fill();
             context.restore();
 
-            drawPath(borderArea(shape, -0.05));
-            context.scale(...imageScale);
-            context.fillStyle = context.createPattern(texture.transparentImage, 'repeat') || '#c0c';
-            context.fill();
+            if (shape.edge) {
+                const edgeTexture = textures[shape.edge.texture];
+                const edgeScale: Point = [edgeTexture.scale / edgeTexture.loadedImage.width, edgeTexture.scale / edgeTexture.loadedImage.height];
+                drawPath(borderArea(shape));
+                context.scale(...edgeScale);
+                context.fillStyle = context.createPattern(edgeTexture.loadedImage, 'repeat') || '#c0c';
+                context.fill();
+            }
+
 
         }
 
@@ -111,15 +122,13 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
 
     const sceneObject = (shape: SceneObject, shadowDirection: Point) => {
         reset();
-        const texture = textures[shape.texture.name];
-        const textureScale = texture.scale * (shape.texture.scale || 1);
+        const texture = textures[shape.texture];
 
         context.moveTo(...shape.origin);
 
         context.translate(...shape.origin);
-        context.rotate((shape.texture.rotate ?? 0) + shape.orientation);
 
-        const imageScale: Point = [textureScale / texture.loadedImage.naturalWidth, textureScale / texture.loadedImage.naturalHeight];
+        const imageScale: Point = [texture.scale / texture.loadedImage.naturalWidth, texture.scale / texture.loadedImage.naturalHeight];
 
         context.scale(...imageScale);
 
@@ -128,7 +137,7 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
         // context.fill();
 
         const shadowVector = stretch(shadowDirection, shape.height ?? 0);
-        context.shadowColor = 'rgba(30, 30, 30, .9)';
+        context.shadowColor = 'rgba(30, 30, 30, .8)';
         context.shadowOffsetX = shadowVector[0];
         context.shadowOffsetY = shadowVector[1];
         context.shadowBlur = 2;
@@ -143,7 +152,7 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
             // context.fillRect(-1 / 2, -1 / 2, 1, 1);
             debugPoint(shape.origin);
             context.arc(...shape.origin, shape.radius, 0, Math.PI * 2);
-            context.fillStyle = 'rgba(255, 0, 0, .2)';
+            context.fillStyle = 'rgba(255, 0, 0, .5)';
             context.fill();
         }
     }
@@ -154,7 +163,7 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
         console.log(scene);
         Object.values(scene.layers).forEach(layer => {
             layer.areas?.sort((a, b) => (a.stretch ? 1 : 0) - (b.stretch ? 1 : 0)).forEach(sceneArea);
-            layer.objects?.forEach(ob => sceneObject(ob, scene.shadowVector));
+            layer.objects?.sort((a, b) => a.height - b.height).forEach(ob => sceneObject(ob, scene.shadowVector));
         });
         if (scene.tint && scene.tint !== 'none') {
             reset();

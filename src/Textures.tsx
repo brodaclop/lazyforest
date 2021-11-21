@@ -10,6 +10,11 @@ import lighterGrass from './textures/lightergrass.jpg';
 import water from './textures/water.jpg';
 import bridge from './textures/bridge.png';
 import bridge2 from './textures/bridge2.png';
+import soil from './textures/soil.jpg';
+import moss from './textures/moss.jpg';
+import snow from './textures/snow.jpg';
+import coarseSnow from './textures/coarse-snow.jpg';
+import ice from './textures/ice.jpg';
 
 export interface Texture {
     name: string;
@@ -19,8 +24,8 @@ export interface Texture {
     scale: number;
     height: number;
     radius: number;
+    alphaMultiplier?: number;
     loadedImage: HTMLImageElement;
-    transparentImage: HTMLImageElement;
 }
 
 export const TINTS: Record<string, string> = {
@@ -29,7 +34,7 @@ export const TINTS: Record<string, string> = {
     night: 'rgba(0,0,250,0.3)',
 }
 
-export type TextureCategory = 'ground' | 'river' | 'road' | 'bridge' | 'tree' | 'rock';
+export type TextureCategory = 'ground' | 'river' | 'road' | 'bridge' | 'tree' | 'rock' | 'river-edge' | 'road-edge';
 
 export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> = [
     {
@@ -37,6 +42,15 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> 
         url: water,
         type: 'pattern',
         scale: 1,
+        category: 'river',
+        height: 0,
+        radius: 0,
+    },
+    {
+        name: 'ice',
+        url: ice,
+        type: 'pattern',
+        scale: 2,
         category: 'river',
         height: 0,
         radius: 0,
@@ -87,6 +101,25 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> 
         radius: 0,
     },
     {
+        name: 'snow',
+        url: snow,
+        type: 'pattern',
+        scale: 3,
+        category: 'ground',
+        height: 0,
+        radius: 0,
+    },
+    {
+        name: 'snow bank',
+        url: coarseSnow,
+        type: 'pattern',
+        scale: 0.7,
+        category: 'road-edge',
+        height: 0,
+        radius: 0,
+        alphaMultiplier: 0.7
+    },
+    {
         name: 'lighter grass',
         url: lighterGrass,
         type: 'pattern',
@@ -94,6 +127,26 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> 
         category: 'ground',
         height: 0,
         radius: 0,
+    },
+    {
+        name: 'soil',
+        url: soil,
+        type: 'pattern',
+        scale: 1,
+        category: 'river-edge',
+        height: 0,
+        radius: 0,
+        alphaMultiplier: 0.7
+    },
+    {
+        name: 'moss',
+        url: moss,
+        type: 'pattern',
+        scale: 1,
+        category: 'road-edge',
+        height: 0,
+        radius: 0,
+        alphaMultiplier: 0.3
     },
     {
         name: 'tree',
@@ -135,16 +188,13 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> 
 
 declare const OffscreenCanvas: any;
 
-const makeImageTransparent = async (image: HTMLImageElement): Promise<HTMLImageElement> => {
+const makeImageTransparent = async (image: HTMLImageElement, alphaMultiplier: number): Promise<HTMLImageElement> => {
     const offscreen = new OffscreenCanvas(image.naturalWidth, image.naturalHeight);
     const osContext = offscreen.getContext('2d') as CanvasRenderingContext2D;
     osContext.drawImage(image, 0, 0);
     const imageData = osContext.getImageData(0, 0, image.naturalWidth, image.naturalHeight);
     for (let i = 3; i < imageData.data.length; i += 4) {
-        if (i === 3) {
-            console.log('alpha', image.src, imageData.data[i]);
-        }
-        imageData.data.set([imageData.data[i] / 3], i);
+        imageData.data.set([imageData.data[i] * alphaMultiplier], i);
     }
     osContext.putImageData(imageData, 0, 0);
     const output = new Image();
@@ -170,9 +220,12 @@ export const Textures: React.FC<{ onLoaded: (textures: Array<Texture>) => unknow
                 const loaded: Array<Texture> = [];
                 for (let i = 0; i < TEXTURES.length; i++) {
                     const t = TEXTURES[i];
-                    const loadedImage = document.getElementById(t.name) as HTMLImageElement;
-                    const transparentImage = await makeImageTransparent(loadedImage);
-                    loaded.push({ ...t, loadedImage, transparentImage });
+                    let loadedImage = document.getElementById(t.name) as HTMLImageElement;
+                    if (t.alphaMultiplier !== undefined) {
+                        loadedImage = await makeImageTransparent(loadedImage, t.alphaMultiplier);
+                        console.log(loadedImage);
+                    }
+                    loaded.push({ ...t, loadedImage });
                 }
                 onLoaded(loaded);
 

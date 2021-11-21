@@ -7,10 +7,10 @@ import { Scene } from './Scene';
 import { ObjectLayerCard } from './ObjectLayerCard';
 import { CreateLayerCard } from './CreateLayerCard';
 import { RoadLayerCard } from './RoadLayerCard';
-import { Card, Checkbox } from 'semantic-ui-react';
 import { VisualsCard } from './VisualsCard';
 import { BaseLayerCard } from './BaseLayerCard';
 import { RiverLayerCard } from './RiverLayerCard';
+import { Card, CardContent, FormControlLabel, Stack, Switch } from '@mui/material';
 
 const SCALE = 70;
 
@@ -22,15 +22,15 @@ export const Canvas: React.FC<{}> = () => {
     const [resolution, setResolution] = useState<number>(SCALE);
     const [debug, setDebug] = useState<boolean>(false);
 
-    const regenerateRoads = useCallback((layer: string, mainWidth: number, sideRoads: Array<number>, texture: string, bridgeTexture?: string) => {
+    const regenerateRoads = useCallback((layer: string, mainWidth: number, sideRoads: Array<number>, texture: string, bridgeTexture: string, vergeTexture: string, vergePercentage: number, vergeOverhang: number) => {
         if (textures) {
-            setScene({ ...SceneGenerator.roads(scene, layer, mainWidth, sideRoads, textures[texture], textures[bridgeTexture ?? ''], scene.layers.river?.areas?.[0]) });
+            setScene({ ...SceneGenerator.roads(scene, layer, mainWidth, sideRoads, textures[texture], textures[bridgeTexture], scene.layers.river?.areas?.[0], textures[vergeTexture], vergePercentage, vergeOverhang) });
         }
     }, [scene, textures]);
 
-    const regenerateRiver = useCallback((layer: string, mainWidth: number, texture: string) => {
+    const regenerateRiver = useCallback((layer: string, mainWidth: number, texture: string, bankTexture: string, bankPercentage: number, bankOverhang: number) => {
         if (textures) {
-            setScene({ ...SceneGenerator.river(scene, layer, mainWidth, textures[texture]) });
+            setScene({ ...SceneGenerator.river(scene, layer, mainWidth, textures[texture], textures[bankTexture], bankPercentage, bankOverhang) });
         }
     }, [scene, textures]);
 
@@ -81,47 +81,44 @@ export const Canvas: React.FC<{}> = () => {
 
     return <>
         <Textures onLoaded={onTexturesLoaded} />
-        <div style={{ display: 'flex' }}>
-            <div>
-                <Card.Group itemsPerRow={1}>
-                    <BaseLayerCard textures={textures ?? {}} createScene={createScene} />
-                    <RiverLayerCard name='river' textures={textures ?? {}} generateRiver={regenerateRiver.bind(null, 'river')} />
-                    <RoadLayerCard name='road' sceneHasRiver={!!scene.layers.river} textures={textures ?? {}} generateRoads={regenerateRoads.bind(null, 'road')} />
-                    {Object.keys(scene.layers).filter(layer => scene.layers[layer].type === 'object').map(layer => {
-                        return <ObjectLayerCard
-                            name={layer}
-                            textures={textures ?? {}}
-                            generateObjects={(count, texture) => generateObjects(layer, count, texture)}
-                            clearLayer={() => clearLayer(layer)}
-                            deleteLayer={() => removeLayer(layer)}
-                        />
-                    })}
-                    {scene.layers.road && <CreateLayerCard layers={Object.keys(scene.layers)} onCreate={createLayer} />}
+        <div style={{ display: 'flex', width: '100%' }}>
+            <Stack spacing={2}>
+                <BaseLayerCard textures={textures ?? {}} createScene={createScene} />
+                <RiverLayerCard name='river' textures={textures ?? {}} generateRiver={regenerateRiver.bind(null, 'river')} />
+                <RoadLayerCard name='road' sceneHasRiver={!!scene.layers.river} textures={textures ?? {}} generateRoads={regenerateRoads.bind(null, 'road')} />
+                {Object.keys(scene.layers).filter(layer => scene.layers[layer].type === 'object').map(layer => {
+                    return <ObjectLayerCard
+                        name={layer}
+                        textures={textures ?? {}}
+                        generateObjects={(count, texture) => generateObjects(layer, count, texture)}
+                        clearLayer={() => clearLayer(layer)}
+                        deleteLayer={() => removeLayer(layer)}
+                    />
+                })}
+                {scene.layers.road && <CreateLayerCard layers={Object.keys(scene.layers)} onCreate={createLayer} />}
 
-                    <VisualsCard tint={scene.tint ?? ''} shadowVector={scene.shadowVector} onShadowChange={shadow => {
-                        scene.shadowVector = shadow;
+                <VisualsCard tint={scene.tint ?? ''} shadowVector={scene.shadowVector} onShadowChange={shadow => {
+                    scene.shadowVector = shadow;
+                    setScene({ ...scene });
+                }}
+                    onTintChange={tint => {
+                        scene.tint = tint;
                         setScene({ ...scene });
                     }}
-                        onTintChange={tint => {
-                            scene.tint = tint;
-                            setScene({ ...scene });
-                        }}
-                        resolution={resolution}
-                        onResolutionChange={setResolution}
-                        edgeShade={scene.edgeShade}
-                        onEdgeShadeChange={edgeShade => {
-                            scene.edgeShade = Math.max(0, edgeShade);
-                            setScene({ ...scene });
-                        }}
-                    />
-                    <Card>
-                        <Card.Content>
-                            <Checkbox label='Debug mode' checked={debug} onChange={(_, data) => setDebug(!debug)} toggle />
-                        </Card.Content>
-                    </Card>
-                </Card.Group>
-
-            </div>
+                    resolution={resolution}
+                    onResolutionChange={setResolution}
+                    edgeShade={scene.edgeShade ?? 0}
+                    onEdgeShadeChange={edgeShade => {
+                        scene.edgeShade = Math.max(0, edgeShade);
+                        setScene({ ...scene });
+                    }}
+                />
+                <Card>
+                    <CardContent>
+                        <FormControlLabel control={<Switch checked={debug} onChange={() => setDebug(!debug)} />} label="Debug mode" />
+                    </CardContent>
+                </Card>
+            </Stack>
             <canvas style={{ width: `${scene.size[0] * resolution}px`, height: `${scene.size[1] * resolution}px` }} ref={canvasRef} width={`${scene.size[0] * resolution}px`} height={`${scene.size[1] * resolution}px`} />
         </div>
     </>;

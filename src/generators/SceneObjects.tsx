@@ -1,5 +1,5 @@
 import { randomBetween } from "../Random";
-import { SceneArea, SceneObject, SceneTexture } from "../Scene";
+import { SceneArea, SceneObject } from "../Scene";
 import { Point, lineLength } from "../Vector";
 
 declare const OffscreenCanvas: any;
@@ -18,7 +18,7 @@ const placeObject = (dim: Point, avoid: Array<SceneObject>, radius: number, trie
     return null;
 }
 
-const spreadObjects = (dim: Point, avoid: Array<SceneObject>, count: number, height: number, radius: number, texture: SceneTexture): Array<SceneObject> => {
+const spreadObjects = (dim: Point, avoid: Array<SceneObject>, count: number, height: number, radius: number, texture: string): Array<SceneObject> => {
 
     let ret: Array<SceneObject> = [];
 
@@ -54,7 +54,7 @@ const inShapeFactory = (shape: SceneArea): ((point: Point) => boolean) => {
 }
 
 export const SceneObjects = {
-    generate: (dim: Point, avoid: Array<SceneObject>, count: number, height: number, radius: number, texture: SceneTexture, exclude: Array<SceneArea> = []): Array<SceneObject> => {
+    generate: (dim: Point, avoid: Array<SceneObject>, count: number, height: number, radius: number, texture: string, exclude: Array<SceneArea> = []): Array<SceneObject> => {
         const shapeChecker = exclude.map(inShapeFactory);
 
         return spreadObjects(dim, avoid, count, height, radius, texture).filter(ob => shapeChecker.every(sc => !sc(ob.origin)));

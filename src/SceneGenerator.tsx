@@ -1,5 +1,5 @@
 import { randomBetween, randomInt } from "./Random";
-import { Scene, SceneArea, SceneObject, SceneTexture } from "./Scene";
+import { Scene, SceneArea, SceneObject } from "./Scene";
 import { Point } from "./Vector";
 import { Road } from "./generators/Road";
 import { SceneObjects } from "./generators/SceneObjects";
@@ -28,9 +28,7 @@ export const SceneGenerator = {
             base: {
                 areas: [{
                     vertices: [[0, 0], [dim[0], 0], dim, [0, dim[1]]],
-                    texture: {
-                        name: baseTexture,
-                    },
+                    texture: baseTexture,
                 }],
                 type: 'base'
             }
@@ -38,7 +36,7 @@ export const SceneGenerator = {
         shadowVector: [0, 0],
         size: dim
     }),
-    river: (scene: Scene, layer: string, mainWidth: number, texture: Texture): Scene => {
+    river: (scene: Scene, layer: string, mainWidth: number, texture: Texture, bankTexture: Texture, bankPercentage: number, bankOverhang: number): Scene => {
         const dim = scene.size;
 
         const mainEndpoints: Array<{ from: Point, width: number }> = [
@@ -47,15 +45,21 @@ export const SceneGenerator = {
         ];
 
         scene.layers[layer] = {
-            areas: Road.generate(mainEndpoints, {
-                name: texture.name
+            areas: Road.generate(mainEndpoints, texture.name).map(area => {
+                if (bankTexture && (bankPercentage || bankOverhang)) {
+                    area.edge = {
+                        texture: bankTexture.name,
+                        width: [- mainWidth * bankOverhang / 200, mainWidth * bankPercentage / 200],
+                    };
+                }
+                return area;
             }),
             type: 'river'
         };
 
         return scene;
     },
-    roads: (scene: Scene, layer: string, mainWidth: number, sideRoads: Array<number>, texture: Texture, bridgeTexture?: Texture, river?: SceneArea): Scene => {
+    roads: (scene: Scene, layer: string, mainWidth: number, sideRoads: Array<number>, texture: Texture, bridgeTexture: Texture | undefined, river: SceneArea | undefined, vergeTexture: Texture | undefined, vergePercentage: number, vergeOverhang: number): Scene => {
         const dim = scene.size;
 
         let mainEndpoints: Array<{ from: Point, width: number }> = [
@@ -68,16 +72,18 @@ export const SceneGenerator = {
             width: width
         }));
 
-        const bridge: SceneTexture | undefined = bridgeTexture && {
-            name: bridgeTexture.name
-        };
-
         scene.layers[layer] = {
-            areas: Road.generate([...mainEndpoints, ...extraEndpoints], {
-                name: texture.name
-            },
-                bridge,
-                river),
+            areas: Road.generate([...mainEndpoints, ...extraEndpoints], texture.name,
+                bridgeTexture?.name,
+                river).map(area => {
+                    if (vergeTexture && (vergePercentage || vergeOverhang)) {
+                        area.edge = {
+                            texture: vergeTexture.name,
+                            width: [- mainWidth * vergeOverhang / 200, mainWidth * vergePercentage / 200],
+                        };
+                    }
+                    return area;
+                }),
             type: 'road'
         };
 
@@ -86,9 +92,7 @@ export const SceneGenerator = {
     objects: (scene: Scene, layer: string, count: number, texture: Texture): Scene => {
         const currentObjects: Array<SceneObject> = scene.layers[layer]?.objects ?? [];
         const roadAreas: Array<SceneArea> = [...scene.layers.road.areas ?? [], ...scene.layers.river.areas ?? []];
-        const newObjects = SceneObjects.generate(scene.size, currentObjects, count, texture.height, texture.radius, {
-            name: texture.name,
-        }, roadAreas);
+        const newObjects = SceneObjects.generate(scene.size, currentObjects, count, texture.height, texture.radius, texture.name, roadAreas);
         scene.layers[layer] = {
             objects: currentObjects.concat(newObjects),
             type: 'object'

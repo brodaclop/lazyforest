@@ -1,5 +1,5 @@
 import { randomBetween, randomInt, randomPlusMinus } from "../Random";
-import { SceneArea, SceneTexture } from "../Scene";
+import { SceneArea } from "../Scene";
 import { Point, lineLength, lineNormal, add, stretch, invert, relative, intersection, subtract } from "../Vector";
 
 const SPLIT_MIN = 0.2;
@@ -36,7 +36,7 @@ const intersect = (line: [Point, Point], area: SceneArea): Array<number> => {
     return ret;
 }
 
-const createRectangle = (from: Point, to: Point, width: number, texture: SceneTexture): SceneArea => {
+const createRectangle = (from: Point, to: Point, width: number, texture: string): SceneArea => {
     const widthAdjustment = stretch(lineNormal(from, to), width / 2);
     const centerline: Array<Point> = [from, to];
     const topLine: Array<Point> = centerline.map(vertex => add(vertex, invert(widthAdjustment)));
@@ -48,7 +48,7 @@ const createRectangle = (from: Point, to: Point, width: number, texture: SceneTe
     };
 }
 
-const generateRoad = (from: Point, to: Point, width: number, texture: SceneTexture, bridgeTexture?: SceneTexture, river?: SceneArea): Array<SceneArea> => {
+const generateRoad = (from: Point, to: Point, width: number, texture: string, bridgeTexture?: string, river?: SceneArea): Array<SceneArea> => {
     const widthAdjustment = stretch(lineNormal(from, to), width / 2);
 
     const centerline: Array<Point> = [from, to];
@@ -83,7 +83,7 @@ const generateRoad = (from: Point, to: Point, width: number, texture: SceneTextu
     }];
 }
 
-const generateRoads = (endpoints: Array<{ from: Point, width: number }>, texture: SceneTexture, bridgeTexture?: SceneTexture, river?: SceneArea): Array<SceneArea> => {
+const generateRoads = (endpoints: Array<{ from: Point, width: number }>, texture: string, bridgeTexture?: string, river?: SceneArea): Array<SceneArea> => {
     if (endpoints.length > 2) {
         const midpoint = endpoints.reduce((acc, curr) => [acc[0] + curr.from[0] / endpoints.length, acc[1] + curr.from[1] / endpoints.length] as Point, [0, 0] as Point);
         return endpoints.flatMap(ep => generateRoad(ep.from, midpoint, ep.width, texture, bridgeTexture, river));

@@ -5,20 +5,19 @@ export interface SceneObject {
     orientation: number;
     radius: number;
     height: number;
-    texture: SceneTexture;
+    texture: string;
 }
 
 export interface SceneArea {
     vertices: Array<Point>;
-    texture: SceneTexture;
+    texture: string;
     stretch?: boolean;
+    edge?: {
+        texture: string;
+        width: [number, number];
+    }
 }
 
-export interface SceneTexture {
-    name: string;
-    scale?: number;
-    rotate?: number;
-}
 
 export interface Scene {
     size: Point;
