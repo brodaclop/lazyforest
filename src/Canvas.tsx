@@ -11,6 +11,7 @@ import { VisualsCard } from './VisualsCard';
 import { BaseLayerCard } from './BaseLayerCard';
 import { RiverLayerCard } from './RiverLayerCard';
 import { Card, CardContent, FormControlLabel, Stack, Switch } from '@mui/material';
+import { Box } from '@mui/system';
 
 const SCALE = 70;
 
@@ -24,7 +25,7 @@ export const Canvas: React.FC<{}> = () => {
 
     const regenerateRoads = useCallback((layer: string, mainWidth: number, sideRoads: Array<number>, texture: string, bridgeTexture: string, vergeTexture: string, vergePercentage: number, vergeOverhang: number) => {
         if (textures) {
-            setScene({ ...SceneGenerator.roads(scene, layer, mainWidth, sideRoads, textures[texture], textures[bridgeTexture], scene.layers.river?.areas?.[0], textures[vergeTexture], vergePercentage, vergeOverhang) });
+            setScene({ ...SceneGenerator.roads(scene, layer, mainWidth, sideRoads, textures[texture], textures[bridgeTexture], textures[vergeTexture], vergePercentage, vergeOverhang) });
         }
     }, [scene, textures]);
 
@@ -79,13 +80,15 @@ export const Canvas: React.FC<{}> = () => {
         setTeztures(textureMap);
     }, []);
 
+    const sceneHasRiver = Object.values(scene.layers).filter(layer => layer.type === 'river').some(layer => layer.areas && layer.areas.length > 0);
+
     return <>
         <Textures onLoaded={onTexturesLoaded} />
         <div style={{ display: 'flex', width: '100%' }}>
             <Stack spacing={1}>
                 <BaseLayerCard textures={textures ?? {}} createScene={createScene} />
                 <RiverLayerCard name='river' textures={textures ?? {}} generateRiver={regenerateRiver.bind(null, 'river')} />
-                <RoadLayerCard name='road' sceneHasRiver={!!scene.layers.river} textures={textures ?? {}} generateRoads={regenerateRoads.bind(null, 'road')} />
+                <RoadLayerCard name='road' sceneHasRiver={sceneHasRiver} textures={textures ?? {}} generateRoads={regenerateRoads.bind(null, 'road')} />
                 {Object.keys(scene.layers).filter(layer => scene.layers[layer].type === 'object').map(layer => {
                     return <ObjectLayerCard
                         name={layer}
@@ -95,7 +98,7 @@ export const Canvas: React.FC<{}> = () => {
                         deleteLayer={() => removeLayer(layer)}
                     />
                 })}
-                {scene.layers.road && <CreateLayerCard layers={Object.keys(scene.layers)} onCreate={createLayer} />}
+                <CreateLayerCard layers={Object.keys(scene.layers)} onCreate={createLayer} />
 
                 <VisualsCard tint={scene.tint ?? ''} shadowVector={scene.shadowVector} onShadowChange={shadow => {
                     scene.shadowVector = shadow;
@@ -113,11 +116,9 @@ export const Canvas: React.FC<{}> = () => {
                         setScene({ ...scene });
                     }}
                 />
-                <Card>
-                    <CardContent>
-                        <FormControlLabel control={<Switch checked={debug} onChange={() => setDebug(!debug)} />} label="Debug mode" />
-                    </CardContent>
-                </Card>
+                <Box sx={{ boxShadow: 3 }}>
+                    <FormControlLabel control={<Switch checked={debug} onChange={() => setDebug(!debug)} />} label="Debug mode" />
+                </Box>
             </Stack>
             <canvas style={{ width: `${scene.size[0] * resolution}px`, height: `${scene.size[1] * resolution}px` }} ref={canvasRef} width={`${scene.size[0] * resolution}px`} height={`${scene.size[1] * resolution}px`} />
         </div>

@@ -1,4 +1,4 @@
-import { Scene, SceneArea, SceneObject } from "./Scene";
+import { LAYER_TYPES, Scene, SceneArea, SceneObject } from "./Scene";
 import { Texture } from "./Textures";
 import { add, lineLength, lineNormal, normalize, Point, stretch, subtract } from "./Vector";
 export const drawScene = (context: CanvasRenderingContext2D, textures: Record<string, Texture>, scene: Scene, debug?: boolean) => {
@@ -160,8 +160,7 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
 
     const drawScene = () => {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-        console.log(scene);
-        Object.values(scene.layers).forEach(layer => {
+        Object.values(scene.layers).sort((l1, l2) => LAYER_TYPES.indexOf(l1.type) - LAYER_TYPES.indexOf(l2.type)).forEach(layer => {
             layer.areas?.sort((a, b) => (a.stretch ? 1 : 0) - (b.stretch ? 1 : 0)).forEach(sceneArea);
             layer.objects?.sort((a, b) => a.height - b.height).forEach(ob => sceneObject(ob, scene.shadowVector));
         });

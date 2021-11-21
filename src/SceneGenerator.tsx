@@ -31,7 +31,7 @@ export const SceneGenerator = {
                     texture: baseTexture,
                 }],
                 type: 'base'
-            }
+            },
         },
         shadowVector: [0, 0],
         size: dim
@@ -59,8 +59,10 @@ export const SceneGenerator = {
 
         return scene;
     },
-    roads: (scene: Scene, layer: string, mainWidth: number, sideRoads: Array<number>, texture: Texture, bridgeTexture: Texture | undefined, river: SceneArea | undefined, vergeTexture: Texture | undefined, vergePercentage: number, vergeOverhang: number): Scene => {
+    roads: (scene: Scene, layer: string, mainWidth: number, sideRoads: Array<number>, texture: Texture, bridgeTexture: Texture | undefined, vergeTexture: Texture | undefined, vergePercentage: number, vergeOverhang: number): Scene => {
         const dim = scene.size;
+
+        const river = Object.values(scene.layers).find(layer => layer.type === 'river')?.areas?.[0];
 
         let mainEndpoints: Array<{ from: Point, width: number }> = [
             { from: [-ROAD_EDGE_OVERHANG, randomBetween(0.1 * dim[1], 0.9 * dim[1])], width: mainWidth },
@@ -91,8 +93,8 @@ export const SceneGenerator = {
     },
     objects: (scene: Scene, layer: string, count: number, texture: Texture): Scene => {
         const currentObjects: Array<SceneObject> = scene.layers[layer]?.objects ?? [];
-        const roadAreas: Array<SceneArea> = [...scene.layers.road.areas ?? [], ...scene.layers.river.areas ?? []];
-        const newObjects = SceneObjects.generate(scene.size, currentObjects, count, texture.height, texture.radius, texture.name, roadAreas);
+        const excludeAreas: Array<SceneArea> = Object.values(scene.layers).filter(layer => layer.type === 'road' || layer.type === 'river').flatMap(layer => layer.areas ?? []);
+        const newObjects = SceneObjects.generate(scene.size, currentObjects, count, texture.height, texture.radius, texture.name, excludeAreas);
         scene.layers[layer] = {
             objects: currentObjects.concat(newObjects),
             type: 'object'

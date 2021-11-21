@@ -15,6 +15,11 @@ import moss from './textures/moss.jpg';
 import snow from './textures/snow.jpg';
 import coarseSnow from './textures/coarse-snow.jpg';
 import ice from './textures/ice.jpg';
+import greenWater from './textures/green-water.jpg';
+import partialSnow from './textures/partial-snow.jpg';
+import snowDirty from './textures/snow-dirty.jpg';
+import snowRoad from './textures/snow-road.jpg';
+import snowyPine from './textures/snowy-pine.png';
 
 export interface Texture {
     name: string;
@@ -42,6 +47,15 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> 
         url: water,
         type: 'pattern',
         scale: 1,
+        category: 'river',
+        height: 0,
+        radius: 0,
+    },
+    {
+        name: 'green water',
+        url: greenWater,
+        type: 'pattern',
+        scale: 2,
         category: 'river',
         height: 0,
         radius: 0,
@@ -110,6 +124,33 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> 
         radius: 0,
     },
     {
+        name: 'snowy road',
+        url: snowRoad,
+        type: 'pattern',
+        scale: 3,
+        category: 'road',
+        height: 0,
+        radius: 0,
+    },
+    {
+        name: 'dirty snow',
+        url: snowDirty,
+        type: 'pattern',
+        scale: 3,
+        category: 'ground',
+        height: 0,
+        radius: 0,
+    },
+    {
+        name: 'partial snow',
+        url: partialSnow,
+        type: 'pattern',
+        scale: 3,
+        category: 'ground',
+        height: 0,
+        radius: 0,
+    },
+    {
         name: 'snow bank',
         url: coarseSnow,
         type: 'pattern',
@@ -155,6 +196,15 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> 
         scale: 2,
         category: 'tree',
         height: 8,
+        radius: 1,
+    },
+    {
+        name: 'snowy pine',
+        url: snowyPine,
+        type: 'single',
+        scale: 2,
+        category: 'tree',
+        height: 20,
         radius: 1,
     },
     {
@@ -223,7 +273,6 @@ export const Textures: React.FC<{ onLoaded: (textures: Array<Texture>) => unknow
                     let loadedImage = document.getElementById(t.name) as HTMLImageElement;
                     if (t.alphaMultiplier !== undefined) {
                         loadedImage = await makeImageTransparent(loadedImage, t.alphaMultiplier);
-                        console.log(loadedImage);
                     }
                     loaded.push({ ...t, loadedImage });
                 }

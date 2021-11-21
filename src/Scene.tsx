@@ -27,8 +27,11 @@ export interface Scene {
     edgeShade?: number;
 }
 
+type LayerType = 'base' | 'river' | 'road' | 'object';
+
+export const LAYER_TYPES: Array<LayerType> = ['base', 'river', 'road', 'object'];
 export interface SceneLayer {
-    type: 'base' | 'road' | 'river' | 'object';
+    type: LayerType;
     areas?: Array<SceneArea>;
     objects?: Array<SceneObject>;
 }
