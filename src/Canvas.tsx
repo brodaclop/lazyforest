@@ -82,7 +82,7 @@ export const Canvas: React.FC<{}> = () => {
     return <>
         <Textures onLoaded={onTexturesLoaded} />
         <div style={{ display: 'flex', width: '100%' }}>
-            <Stack spacing={2}>
+            <Stack spacing={1}>
                 <BaseLayerCard textures={textures ?? {}} createScene={createScene} />
                 <RiverLayerCard name='river' textures={textures ?? {}} generateRiver={regenerateRiver.bind(null, 'river')} />
                 <RoadLayerCard name='road' sceneHasRiver={!!scene.layers.river} textures={textures ?? {}} generateRoads={regenerateRoads.bind(null, 'road')} />

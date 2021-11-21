@@ -1,4 +1,4 @@
-import { FormControl, FormControlLabel, FormHelperText, Slider } from '@mui/material';
+import { FormControlLabel, Slider } from '@mui/material';
 import React from 'react';
 
 interface NumberInputProps {

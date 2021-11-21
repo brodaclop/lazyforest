@@ -1,5 +1,6 @@
-import { Button, Card, CardActions, CardContent, CardHeader } from '@mui/material';
+import { Button } from '@mui/material';
 import React, { useState } from 'react';
+import { DefinitionCard } from './DefinitionCard';
 import { NumberInput } from './NumberInput';
 import { Texture } from './Textures';
 import { TextureSelector } from './TextureSelector';
@@ -16,20 +17,23 @@ export const BaseLayerCard: React.FC<BaseLayerCardProps> = ({ textures, createSc
     const [width, setWidth] = useState<number>(10);
     const [height, setHeight] = useState<number>(10);
 
-    return <Card sx={{ boxShadow: 3 }}>
-        <CardHeader title='Scene' />
-        <CardContent>
-            <NumberInput width={25} value={width} min={1} max={50} step={1} onChange={setWidth} label='Width' />
-            <NumberInput width={25} value={height} min={1} max={50} step={1} onChange={setHeight} label='Height' />
-            <TextureSelector width={30} value={texture} textures={textures ?? {}} type='pattern' category='ground' onChange={setTexture} label='Ground texture' />
-        </CardContent>
-        <CardActions>
-            <Button
-                variant='contained'
-                disabled={texture === ''}
-                onClick={() => createScene([width, height], texture)}>
-                Create
-            </Button>
-        </CardActions>
-    </Card>
+    return <DefinitionCard
+        title={`Scene (${width} x ${height})`}
+        titleContent={<Button
+            disabled={texture === ''}
+            onClick={e => { createScene([width, height], texture); e.stopPropagation(); }}>
+            Create
+        </Button>
+        }
+        enabled
+        blocks={[{
+            title: 'Background',
+            content: <>
+                <NumberInput width={25} value={width} min={1} max={50} step={1} onChange={setWidth} label='Width' />
+                <NumberInput width={25} value={height} min={1} max={50} step={1} onChange={setHeight} label='Height' />
+                <TextureSelector width={30} value={texture} textures={textures ?? {}} type='pattern' category='ground' onChange={setTexture} label='Ground texture' />
+            </>
+        },
+        ]} />;
+
 }

@@ -1,6 +1,7 @@
 import { Add, ClearAll, Delete } from '@mui/icons-material';
-import { Card, CardHeader, CardContent, CardActions, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import React, { useState } from 'react';
+import { DefinitionCard } from './DefinitionCard';
 import { NumberInput } from './NumberInput';
 import { Texture } from './Textures';
 import { TextureSelector } from './TextureSelector';
@@ -18,16 +19,21 @@ export const ObjectLayerCard: React.FC<ObjectLayerCardProps> = ({ name, textures
     const [count, setCount] = useState<number>(0);
     const [texture, setTexture] = useState<string>('');
 
-    return <Card>
-        <CardHeader title={`Object layer ${name}`} />
-        <CardContent>
-            <NumberInput width={40} label='No. of objects:' value={count} step={1} min={0} max={100} onChange={setCount} />
-            <TextureSelector width={40} label='Object texture' value={texture} textures={textures ?? {}} type='single' onChange={setTexture} />
-        </CardContent>
-        <CardActions>
-            <Button variant='contained' startIcon={<Add />} disabled={count === 0 || texture === ''} onClick={() => generateObjects(count, texture)} >Add</Button>
-            <Button variant='contained' startIcon={<ClearAll />} disabled={count === 0 || texture === ''} onClick={clearLayer} >Clear</Button>
-            <Button variant='contained' startIcon={<Delete />} disabled={count === 0 || texture === ''} onClick={deleteLayer} >Remove</Button>
-        </CardActions>
-    </Card>
+    return <DefinitionCard
+        title={`Layer: ${name}`}
+        enabled
+        titleContent={<>
+            <Button startIcon={<Add />} disabled={count === 0 || texture === ''} onClick={e => { generateObjects(count, texture); e.stopPropagation() }} >Add</Button>
+            <Button startIcon={<ClearAll />} onClick={e => { clearLayer(); e.stopPropagation(); }} >Clear</Button>
+            <Button startIcon={<Delete />} onClick={e => { deleteLayer(); e.stopPropagation(); }} >Remove</Button>
+        </>}
+        blocks={[
+            {
+                content: <>
+                    <NumberInput width={40} label='No. of objects:' value={count} step={1} min={0} max={100} onChange={setCount} />
+                    <TextureSelector width={40} label='Object texture' value={texture} textures={textures ?? {}} type='single' onChange={setTexture} />
+                </>
+            }
+        ]}
+    />
 }

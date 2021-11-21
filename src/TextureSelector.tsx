@@ -14,7 +14,7 @@ export interface TextureSelectorProps {
 
 
 export const TextureSelector: React.FC<TextureSelectorProps> = ({ textures, type, category, label, value, width = 90, onChange }) => {
-    const renderValue = (t: string) => <><img style={{ height: '1.5rem', marginRight: '0.2rem' }} src={textures[t].url} />{t}</>;
+    const renderValue = (t: string) => <><img alt={`Texture: ${t}`} style={{ height: '1.5rem', marginRight: '0.2rem' }} src={textures[t].url} />{t}</>;
 
     return <FormControl sx={{ width: `${width}%` }}>
         <InputLabel>{label}</InputLabel>
