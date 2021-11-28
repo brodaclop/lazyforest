@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/lazyforest/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/lazyforest/static/js/main.69ce5d93.chunk.js",
-    "main.js.map": "/lazyforest/static/js/main.69ce5d93.chunk.js.map",
+    "main.js": "/lazyforest/static/js/main.beb41e83.chunk.js",
+    "main.js.map": "/lazyforest/static/js/main.beb41e83.chunk.js.map",
     "runtime-main.js": "/lazyforest/static/js/runtime-main.2f776aab.js",
     "runtime-main.js.map": "/lazyforest/static/js/runtime-main.2f776aab.js.map",
-    "static/js/2.4fc489af.chunk.js": "/lazyforest/static/js/2.4fc489af.chunk.js",
-    "static/js/2.4fc489af.chunk.js.map": "/lazyforest/static/js/2.4fc489af.chunk.js.map",
+    "static/js/2.c83ced1a.chunk.js": "/lazyforest/static/js/2.c83ced1a.chunk.js",
+    "static/js/2.c83ced1a.chunk.js.map": "/lazyforest/static/js/2.c83ced1a.chunk.js.map",
     "static/js/3.5144a1e1.chunk.js": "/lazyforest/static/js/3.5144a1e1.chunk.js",
     "static/js/3.5144a1e1.chunk.js.map": "/lazyforest/static/js/3.5144a1e1.chunk.js.map",
     "index.html": "/lazyforest/index.html",
     "static/css/main.6dea0f05.chunk.css.map": "/lazyforest/static/css/main.6dea0f05.chunk.css.map",
-    "static/js/2.4fc489af.chunk.js.LICENSE.txt": "/lazyforest/static/js/2.4fc489af.chunk.js.LICENSE.txt",
+    "static/js/2.c83ced1a.chunk.js.LICENSE.txt": "/lazyforest/static/js/2.c83ced1a.chunk.js.LICENSE.txt",
     "static/media/bridge.01e94610.png": "/lazyforest/static/media/bridge.01e94610.png",
     "static/media/bridge2.c503a7ba.png": "/lazyforest/static/media/bridge2.c503a7ba.png",
     "static/media/coarse-snow.b9df7fb0.jpg": "/lazyforest/static/media/coarse-snow.b9df7fb0.jpg",
@@ -21,17 +21,23 @@
     "static/media/ice.6cad5e0a.jpg": "/lazyforest/static/media/ice.6cad5e0a.jpg",
     "static/media/lightergrass.775fd4e3.jpg": "/lazyforest/static/media/lightergrass.775fd4e3.jpg",
     "static/media/moss.7486eee9.jpg": "/lazyforest/static/media/moss.7486eee9.jpg",
+    "static/media/partial-snow.636ffd6a.jpg": "/lazyforest/static/media/partial-snow.636ffd6a.jpg",
     "static/media/rock.f8863753.png": "/lazyforest/static/media/rock.f8863753.png",
+    "static/media/snow-dirty.5dca186d.jpg": "/lazyforest/static/media/snow-dirty.5dca186d.jpg",
+    "static/media/snow-road.04dd554c.jpg": "/lazyforest/static/media/snow-road.04dd554c.jpg",
     "static/media/snow.cdc2b6b3.jpg": "/lazyforest/static/media/snow.cdc2b6b3.jpg",
+    "static/media/snowy-pine.cbda0139.png": "/lazyforest/static/media/snowy-pine.cbda0139.png",
     "static/media/soil.9c952be7.jpg": "/lazyforest/static/media/soil.9c952be7.jpg",
+    "static/media/stump.5b4a461a.png": "/lazyforest/static/media/stump.5b4a461a.png",
     "static/media/tree.251e1382.png": "/lazyforest/static/media/tree.251e1382.png",
     "static/media/tree2.b70d7e22.png": "/lazyforest/static/media/tree2.b70d7e22.png",
+    "static/media/trunk.9be993ac.png": "/lazyforest/static/media/trunk.9be993ac.png",
     "static/media/water.5bcc6117.jpg": "/lazyforest/static/media/water.5bcc6117.jpg"
   },
   "entrypoints": [
     "static/js/runtime-main.2f776aab.js",
-    "static/js/2.4fc489af.chunk.js",
+    "static/js/2.c83ced1a.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
-    "static/js/main.69ce5d93.chunk.js"
+    "static/js/main.beb41e83.chunk.js"
   ]
 }
