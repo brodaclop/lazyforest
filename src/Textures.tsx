@@ -20,6 +20,9 @@ import partialSnow from './textures/partial-snow.jpg';
 import snowDirty from './textures/snow-dirty.jpg';
 import snowRoad from './textures/snow-road.jpg';
 import snowyPine from './textures/snowy-pine.png';
+import stump from './textures/stump.png';
+import trunk from './textures/trunk.png';
+import bumpySnow from './textures/snow-bumpy.jpg';
 
 export interface Texture {
     name: string;
@@ -124,6 +127,15 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> 
         radius: 0,
     },
     {
+        name: 'drifting snow',
+        url: bumpySnow,
+        type: 'pattern',
+        scale: 3,
+        category: 'ground',
+        height: 0,
+        radius: 0,
+    },
+    {
         name: 'snowy road',
         url: snowRoad,
         type: 'pattern',
@@ -154,11 +166,11 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> 
         name: 'snow bank',
         url: coarseSnow,
         type: 'pattern',
-        scale: 0.7,
+        scale: 2.3,
         category: 'road-edge',
         height: 0,
         radius: 0,
-        alphaMultiplier: 0.7
+        alphaMultiplier: 0.5
     },
     {
         name: 'lighter grass',
@@ -233,6 +245,24 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> 
         category: 'rock',
         height: 2,
         radius: 0.25,
+    },
+    {
+        name: 'tree stump',
+        url: stump,
+        type: 'single',
+        scale: 0.6,
+        category: 'tree',
+        height: 5,
+        radius: 0.5,
+    },
+    {
+        name: 'fallen tree trunk',
+        url: trunk,
+        type: 'single',
+        scale: 1.6,
+        category: 'tree',
+        height: 4,
+        radius: 0.8,
     },
 ]
 

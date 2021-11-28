@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { drawScene } from './ShapeDrawer';
 import { SceneGenerator } from './SceneGenerator';
-import { Point } from './Vector';
+import { Point, stretch } from './Vector';
 import { Texture, Textures } from './Textures';
 import { Scene } from './Scene';
 import { ObjectLayerCard } from './ObjectLayerCard';
@@ -10,11 +10,13 @@ import { RoadLayerCard } from './RoadLayerCard';
 import { VisualsCard } from './VisualsCard';
 import { BaseLayerCard } from './BaseLayerCard';
 import { RiverLayerCard } from './RiverLayerCard';
-import { Card, CardContent, FormControlLabel, Stack, Switch } from '@mui/material';
+import { FormControlLabel, Stack, Switch } from '@mui/material';
 import { Box } from '@mui/system';
+import fileDownload from 'js-file-download';
 
 const SCALE = 70;
 
+declare const OffscreenCanvas: any;
 export const Canvas: React.FC<{}> = () => {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -67,6 +69,7 @@ export const Canvas: React.FC<{}> = () => {
         if (textures) {
             const canvas = canvasRef.current;
             if (canvas) {
+                // babylonRender(canvas, textures, scene);
                 const context = canvas.getContext('2d');
                 if (context) {
                     drawScene(context, textures, scene, debug);
@@ -74,6 +77,8 @@ export const Canvas: React.FC<{}> = () => {
             }
         }
     }, [textures, scene, resolution, debug]);
+
+
 
     const onTexturesLoaded = useCallback((textures: Array<Texture>) => {
         const textureMap: Record<string, Texture> = textures.reduce((acc, curr) => { acc[curr.name] = curr; return acc; }, {} as Record<string, Texture>);
@@ -86,7 +91,24 @@ export const Canvas: React.FC<{}> = () => {
         <Textures onLoaded={onTexturesLoaded} />
         <div style={{ display: 'flex', width: '100%' }}>
             <Stack spacing={1}>
-                <BaseLayerCard textures={textures ?? {}} createScene={createScene} />
+                <BaseLayerCard
+                    textures={textures ?? {}}
+                    createScene={createScene}
+                    load={scene => setScene(scene)}
+                    save={() => fileDownload(JSON.stringify(scene), `scene (${scene.size[0]} x ${scene.size[1]}).json`, 'text/json')}
+                    render={async () => {
+                        if (textures) {
+                            const offscreen = new OffscreenCanvas(...stretch(scene.size, resolution));
+                            const osContext = offscreen.getContext('2d') as CanvasRenderingContext2D;
+                            drawScene(osContext, textures, scene, false);
+                            const blob = await offscreen.convertToBlob({
+                                type: "image/jpeg",
+                                quality: 0.95
+                            });
+                            fileDownload(blob, `scene (${scene.size[0]} x ${scene.size[1]}).jpg`, 'image/jpeg');
+                        }
+                    }}
+                />
                 <RiverLayerCard name='river' textures={textures ?? {}} generateRiver={regenerateRiver.bind(null, 'river')} />
                 <RoadLayerCard name='road' sceneHasRiver={sceneHasRiver} textures={textures ?? {}} generateRoads={regenerateRoads.bind(null, 'road')} />
                 {Object.keys(scene.layers).filter(layer => scene.layers[layer].type === 'object').map(layer => {
@@ -100,21 +122,10 @@ export const Canvas: React.FC<{}> = () => {
                 })}
                 <CreateLayerCard layers={Object.keys(scene.layers)} onCreate={createLayer} />
 
-                <VisualsCard tint={scene.tint ?? ''} shadowVector={scene.shadowVector} onShadowChange={shadow => {
-                    scene.shadowVector = shadow;
-                    setScene({ ...scene });
-                }}
-                    onTintChange={tint => {
-                        scene.tint = tint;
-                        setScene({ ...scene });
-                    }}
+                <VisualsCard scene={scene}
                     resolution={resolution}
                     onResolutionChange={setResolution}
-                    edgeShade={scene.edgeShade ?? 0}
-                    onEdgeShadeChange={edgeShade => {
-                        scene.edgeShade = Math.max(0, edgeShade);
-                        setScene({ ...scene });
-                    }}
+                    onSceneChanged={scene => setScene({ ...scene })}
                 />
                 <Box sx={{ boxShadow: 3 }}>
                     <FormControlLabel control={<Switch checked={debug} onChange={() => setDebug(!debug)} />} label="Debug mode" />

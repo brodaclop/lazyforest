@@ -131,6 +131,7 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
         const imageScale: Point = [texture.scale / texture.loadedImage.naturalWidth, texture.scale / texture.loadedImage.naturalHeight];
 
         context.scale(...imageScale);
+        context.rotate(shape.orientation);
 
         //TODO: debug why this fucks up everything
         // context.fillStyle = '#cfc';
@@ -172,18 +173,20 @@ export const drawScene = (context: CanvasRenderingContext2D, textures: Record<st
         }
         reset();
         context.setTransform(new DOMMatrix());
-        context.beginPath();
-        for (let x = 0; x < scene.size[0]; x++) {
-            context.moveTo(globalScale[0] * x, 0);
-            context.lineTo(globalScale[0] * x, context.canvas.height);
+        if (scene.grid) {
+            context.beginPath();
+            for (let x = 0; x < scene.size[0]; x++) {
+                context.moveTo(globalScale[0] * x, 0);
+                context.lineTo(globalScale[0] * x, context.canvas.height);
+            }
+            for (let y = 0; y < scene.size[1]; y++) {
+                context.moveTo(0, y * globalScale[1]);
+                context.lineTo(context.canvas.width, y * globalScale[1]);
+            }
+            context.strokeStyle = 'black';
+            context.lineWidth = 1;
+            context.stroke();
         }
-        for (let y = 0; y < scene.size[1]; y++) {
-            context.moveTo(0, y * globalScale[1]);
-            context.lineTo(context.canvas.width, y * globalScale[1]);
-        }
-        context.strokeStyle = 'black';
-        context.lineWidth = 1;
-        context.stroke();
     }
 
     drawScene();

@@ -25,6 +25,7 @@ export interface Scene {
     shadowVector: Point;
     tint?: string;
     edgeShade?: number;
+    grid?: boolean;
 }
 
 type LayerType = 'base' | 'river' | 'road' | 'object';
