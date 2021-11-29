@@ -34,7 +34,9 @@ export const BaseLayerCard: React.FC<BaseLayerCardProps> = ({ textures, createSc
                 id="load-button"
                 type="file"
                 onChange={async e => {
-                    load(JSON.parse(await e.target.files![0].text()));
+                    const file = e.target.files![0];
+                    e.target.value = null as unknown as string;
+                    load(JSON.parse(await file.text()));
                 }}
             />
             <label htmlFor="load-button">

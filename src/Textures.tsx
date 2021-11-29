@@ -23,6 +23,7 @@ import snowyPine from './textures/snowy-pine.png';
 import stump from './textures/stump.png';
 import trunk from './textures/trunk.png';
 import bumpySnow from './textures/snow-bumpy.jpg';
+import rubble from './textures/rubble.png';
 
 export interface Texture {
     name: string;
@@ -247,13 +248,22 @@ export const TEXTURES: Array<Omit<Texture, 'loadedImage' | 'transparentImage'>> 
         radius: 0.25,
     },
     {
+        name: 'rubble',
+        url: rubble,
+        type: 'single',
+        scale: 0.7,
+        category: 'rock',
+        height: 2,
+        radius: 0.4,
+    },
+    {
         name: 'tree stump',
         url: stump,
         type: 'single',
         scale: 0.6,
         category: 'tree',
         height: 5,
-        radius: 0.5,
+        radius: 0.4,
     },
     {
         name: 'fallen tree trunk',
